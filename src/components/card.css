@@ -1,0 +1,38 @@
+.card,
+.CardLink {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    width: 100%;
+    height: 100%;
+    color: white;
+    text-decoration: none;
+    box-sizing: border-box; /* Add this line */
+  }
+  
+  .card-left {
+    flex: 0 0 auto;
+    padding-left: 16px;
+    height: 50px;
+    
+  }
+  
+  .card-right {
+    margin-left: auto;
+    padding-right: 16px;
+  }
+  
+  .card-body {
+    flex-grow: 1;
+  }
+  
+  .card p,
+  .card h3,
+  .CardLink p,
+  .CardLink h3 {
+    margin: 0; /* Remove the default margin */
+  }
+  
+  .card + .card {
+    border-top: 1px solid #ccc;
+  }

@@ -1,0 +1,42 @@
+.admin-form-container {
+    width: 550px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: grey;
+  }
+  
+  .admin-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .admin-form-group {
+    margin-bottom: 20px;
+  }
+  
+  .admin-form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .admin-form-group input,
+  .admin-form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .admin-form-submit {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .admin-form-submit:hover {
+    background-color: #0056b3;
+  }
+  
