@@ -1,4 +1,10 @@
 export interface Item {
     name: string
-    shippable: boolean
+    description?: string
+    imageUrl?: string
 }
+
+export interface InventoryItem extends Item {
+    ownedCurrent?: number;
+    ownedLifetime?: number;
+  }

@@ -1,5 +1,7 @@
+import { Item } from "./item";
+
 export interface Recipe {
-    input: { [itemName: string]: number }[];
-    output: string;
-    skillRequirements: { [skillName: string]: number }[];
+    input: { [itemName: string]: number };
+    output: Item;
+    skillRequirements: { [skillName: string]: number };
 }

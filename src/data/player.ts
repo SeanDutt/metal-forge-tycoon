@@ -1,6 +1,8 @@
 export interface Player {
-    id: any
     displayName: string;
-    inventory: object;
-    skillLevels: object;
+    id: string;
+    inventory: Record<string, { ownedCurrent: number; ownedLifetime: number }>;
+    skillLevels: Record<string, number>;
 }
+  
+

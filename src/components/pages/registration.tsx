@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth } from "../../firebase.ts";
 import { useNavigate } from "react-router-dom";
-import { createPlayer } from "../../utils/newPlayer";
+import { createPlayer } from "../../utils/newPlayer.tsx";
 
 function AuthComponent() {
   const [displayName, setDisplayName] = useState("Dutt1ez");
@@ -18,7 +18,7 @@ function AuthComponent() {
       setIsRegistered(true);
     } catch (error) {
       // Registration failed
-      console.error("Error registering user:", error.message);
+      console.error("Error registering user:", error);
     }
   };
 
@@ -30,7 +30,7 @@ function AuthComponent() {
       navigate("/");
     } catch (error) {
       // Login failed
-      console.error("Error logging in:", error.message);
+      console.error("Error logging in:", error);
     }
   };
 

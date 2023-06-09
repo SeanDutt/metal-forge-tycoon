@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
-import Card from '../card';
+import Card from '../card.tsx';
 import React from 'react';
-import { db } from '../../firebase';
+import { db } from '../../firebase.ts';
 
 export interface ExploreLocation {
   name: string;

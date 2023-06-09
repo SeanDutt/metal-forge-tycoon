@@ -1,6 +1,6 @@
 import { doc, setDoc } from "firebase/firestore";
-import { Player } from "../data/player";
-import { db } from "../firebase";
+import { Player } from "../data/player.tsx";
+import { db } from "../firebase.ts";
 
 export async function createPlayer(uid: string, displayName: string): Promise<void> {
     const newPlayer: Player = {

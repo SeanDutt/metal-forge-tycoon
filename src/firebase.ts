@@ -1,9 +1,11 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { collection, doc, getDoc, getDocs, getFirestore } from "firebase/firestore";
+import { DocumentData, collection, doc, getDoc, getDocs, getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { Recipe } from "./data/recipe";
+import { Player } from "./data/player";
+import { Item } from "./data/item";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -27,6 +29,37 @@ const auth = getAuth(app);
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
 
+export async function getItemById(itemId: string): Promise<Item | null> {
+  try {
+    const itemDocRef = doc(db, "items", itemId);
+    const itemDocSnap = await getDoc(itemDocRef);
+
+    if (itemDocSnap.exists()) {
+      const itemData = itemDocSnap.data();
+      // Assuming itemData is an object that represents the item properties
+      // You can modify this part based on your actual data structure
+
+      // Create an Item object based on the fetched data
+      const item: Item = {
+        name: itemId,
+        description: itemData.description,
+        imageUrl: itemData.imageURL,
+        // Include other properties based on your Item interface
+      };
+
+      return item;
+    }
+
+    return null; // Item not found
+  } catch (error) {
+    console.error("Error fetching item:", error);
+    return null;
+  }
+}
+
+// Recipe helpers...
+
+// Gets all recipes from firestore DB
 export async function getAllRecipes() {
   try {
     const recipeCollection = collection(db, "recipes");
@@ -51,34 +84,40 @@ export async function getAllRecipes() {
   }
 }
 
-export async function getRecipesBySkill(playerData) {
+// Gets all recipes, then filters them down to what skillReqs are met in the playerSkills
+export async function getRecipesBySkill(playerData: Player): Promise<Recipe[]> {
   try {
     const recipeCollection = collection(db, "recipes");
     const recipeSnapshot = await getDocs(recipeCollection);
 
-    // Transform the recipe snapshot data into an array of recipes
-    const recipes = recipeSnapshot.docs.map((doc) => {
-      // Access the recipe document data
+    // Transform the recipe snapshot data into an array of promises
+    const recipePromises = recipeSnapshot.docs.flatMap(async (doc) => {
       const recipeData = doc.data();
-      // Check if the recipe has skill requirements defined
       const hasSkillRequirements = recipeData.skillRequirements && Object.keys(recipeData.skillRequirements).length > 0;
-      // If the recipe has no skill requirements or the player meets the requirements, include the recipe
+
       if (!hasSkillRequirements || Object.keys(recipeData.skillRequirements).every(
         (skill) => playerData.skillLevels[skill] >= recipeData.skillRequirements[skill]
       )) {
-        // Extract the necessary fields and return a recipe object
-        return {
-          input: recipeData.input,
-          output: doc.id,
-          skillRequirements: recipeData.skillRequirements,
-        };
+        const outputItemPromise = getItemById(recipeData.output);
+        const outputItem = await outputItemPromise;
+
+        if (outputItem) {
+          return {
+            input: recipeData.input,
+            output: outputItem,
+            skillRequirements: recipeData.skillRequirements,
+          } as Recipe;
+        }
       }
-      // Exclude the recipe
+
       return null;
     });
 
+    // Wait for all recipe promises to resolve
+    const recipeResults = await Promise.all(recipePromises);
+
     // Filter out null values (recipes that didn't meet the requirements)
-    const availableRecipes = recipes.filter((recipe) => recipe !== null);
+    const availableRecipes = recipeResults.filter((recipe): recipe is Recipe => recipe !== null);
 
     return availableRecipes;
   } catch (error) {
@@ -87,7 +126,8 @@ export async function getRecipesBySkill(playerData) {
   }
 }
 
-export async function getRecipesByItemId(itemId) {
+// Takes in an itemId and tries to return an array of recipes that item is used in
+export async function getRecipesByItemId(itemId: string) {
   try {
     const recipeCollection = collection(db, "recipes");
     const recipeSnapshot = await getDocs(recipeCollection);
@@ -118,6 +158,7 @@ export async function getRecipesByItemId(itemId) {
   }
 }
 
+// Takes in an itemId and tries to return a recipe for that item
 export async function getRecipeForItemId(itemId: string): Promise<Recipe | null> {
   try {
     const recipeDocRef = doc(db, "recipes", itemId);
@@ -128,19 +169,24 @@ export async function getRecipeForItemId(itemId: string): Promise<Recipe | null>
     }
 
     const recipeData = recipeDocSnapshot.data();
+    const outputItem = await getItemById(recipeData.output);
 
-    return {
-      input: recipeData.input,
-      output: itemId,
-      skillRequirements: recipeData.skillRequirements,
-    };
+    if (outputItem) {
+      return {
+        input: recipeData.input,
+        output: outputItem,
+        skillRequirements: recipeData.skillRequirements,
+      };
+    } else {
+      return null; // Output item not found
+    }
   } catch (error) {
     console.error("Error fetching recipe:", error);
     return null;
   }
 }
 
-const transformPlayerData = (data) => {
+const transformPlayerData = (data: DocumentData) => {
   const displayName = data.displayName || '';
   const skillLevels = data.skillLevels || {};
   const inventory = data.inventory || {};
@@ -154,7 +200,7 @@ const transformPlayerData = (data) => {
   };
 };
 
-const getPlayerById = async (playerID) => {
+const getPlayerById = async (playerID: string) => {
   const playerRef = doc(db, "players", playerID);
   const playerSnapshot = await getDoc(playerRef);
 

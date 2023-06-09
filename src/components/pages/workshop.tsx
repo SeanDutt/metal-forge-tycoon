@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { PlayerContext } from "../../data/playerContext";
-import { Recipe } from "../../data/recipe";
-import { getRecipesBySkill } from "../../firebase";
-import { addToInventory } from "../../utils/inventoryUtils";
-import Card from "../card";
+import { PlayerContext } from "../../data/playerContext.tsx";
+import { Recipe } from "../../data/recipe.tsx";
+import { getRecipesBySkill } from "../../firebase.ts";
+import { addToInventory } from "../../utils/inventoryUtils.tsx";
+import Card from "../card.tsx";
 
 const Workshop: React.FC = () => {
   // store all of our unlocked recipes
-  const [recipes, setRecipes] = useState<(Recipe | null)[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
 
   // store the search terms used
   //const [searchTerm, setSearchTerm ] = useState('');
@@ -19,40 +19,41 @@ const Workshop: React.FC = () => {
   const playerData = useContext(PlayerContext);
 
   // Access the crafting skill level
-  const craftingSkillLevel = playerData?.skillLevels["crafting"] || 0;
+  const craftingSkillLevel = playerData.skillLevels["crafting"] || 0;
 
   useEffect(() => {
     async function fetchRecipesData() {
       const fetchedRecipes = await getRecipesBySkill(playerData);
       setRecipes(fetchedRecipes);
     }
-
+  
     fetchRecipesData();
   }, [playerData]);
 
-  const handleCraft = async (recipe) => {
+  const handleCraft = async (recipe: Recipe) => {
     const { input, output } = recipe;
-
-    // Check if the player has all the required items in the inventory
-    const hasRequiredItems = Object.entries(input).every(([item, quantity]) => {
-      const inventoryItem = playerData?.inventory[item];
+  
+    const hasRequiredItems = Object.entries(input).every(([itemName, quantity]) => {
+      const inventoryItem = playerData?.inventory?.[itemName];
       return (
-        inventoryItem && inventoryItem.ownedCurrent >= (quantity as number)
+        inventoryItem &&
+        typeof inventoryItem.ownedCurrent === "number" &&
+        inventoryItem.ownedCurrent >= quantity
       );
     });
-
+  
     if (hasRequiredItems) {
-      const itemsToUpdate = Object.entries(input).map(([item, quantity]) => {
-        const updatedQuantity = -(quantity as number); // Use type assertion to cast to number
-        return { itemName: item, quantity: updatedQuantity };
+      const itemsToUpdate = Object.entries(input).map(([itemName, quantity]) => {
+        const updatedQuantity = -quantity;
+        return { itemName, quantity: updatedQuantity };
       });
-
-      itemsToUpdate.push({ itemName: output, quantity: 1 });
-
+  
+      itemsToUpdate.push({ itemName: output.name, quantity: 1 });
+  
       await addToInventory(playerData?.id, itemsToUpdate);
     }
   };
-
+  
   //   const filteredRecipes = recipes.filter((recipe) => {
   //     // Filter based on skill requirements
   //     const hasSkillRequirement = recipe.skillRequired.every(
@@ -82,8 +83,8 @@ const Workshop: React.FC = () => {
       <h3>{`Crafting skill: ${craftingSkillLevel}`}</h3>
       {recipes.map((recipe, index) => (
         <Card
-          key={`${recipe?.output}`}
-          primaryText={`${recipe?.output}`}
+          key={index}
+          primaryText={`${recipe?.output.name}`}
           secondaryText={
             recipe?.input &&
             Object.entries(recipe.input).map(

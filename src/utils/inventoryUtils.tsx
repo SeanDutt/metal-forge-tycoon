@@ -1,7 +1,7 @@
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../firebase.ts";
 
-export const addToInventory = async (playerId, obtainedItems) => {
+export const addToInventory = async (playerId: string, obtainedItems: any[]) => {
     // Retrieve the player's document from the Firestore database
     const playerDocRef = doc(db, "players", playerId);
     const playerDocSnapshot = await getDoc(playerDocRef);

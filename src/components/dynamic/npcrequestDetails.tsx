@@ -1,9 +1,9 @@
 import { doc, getDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { db } from '../../firebase';
-import Card from '../card';
-import { NPCRequest } from '../pages/npcrequests';
+import { db } from '../../firebase.ts';
+import Card from '../card.tsx';
+import { NPCRequest } from '../pages/npcrequests.tsx';
 
 const NPCRequestDetails = () => {
   const { npcRequestId } = useParams();
@@ -12,7 +12,7 @@ const NPCRequestDetails = () => {
   useEffect(() => {
     const fetchNpcRequest = async () => {
       try {
-        const npcRequestDocRef = doc(db, 'npcrequests', npcRequestId);
+        const npcRequestDocRef = doc(db, 'npcrequests', npcRequestId ?? '');
         const npcRequestDocSnapshot = await getDoc(npcRequestDocRef);
         if (npcRequestDocSnapshot.exists()) {
           const npcRequestData = npcRequestDocSnapshot.data();

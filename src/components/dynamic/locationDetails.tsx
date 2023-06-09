@@ -1,11 +1,11 @@
 import { doc, getDoc } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { PlayerContext } from "../../data/playerContext";
-import { db } from '../../firebase';
-import { addToInventory } from "../../utils/inventoryUtils";
-import Card from '../card';
-import { ExploreLocation } from '../pages/explore';
+import { PlayerContext } from "../../data/playerContext.tsx";
+import { db } from '../../firebase.ts';
+import { addToInventory } from "../../utils/inventoryUtils.tsx";
+import Card from '../card.tsx';
+import { ExploreLocation } from '../pages/explore.tsx';
 
 interface LootPoolItem {
   itemName: string,
@@ -17,11 +17,12 @@ const LocationDetails = () => {
   const player = useContext(PlayerContext);
   const [locationData, setLocationData] = useState<ExploreLocation>();
   const [lootPool, setLootPool] = useState<LootPoolItem[]>([]);
+  const [lastObtainedItems, setLastObtainedItems] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchLocationData = async () => {
       try {
-        const locationDocRef = doc(db, 'locations', location);
+        const locationDocRef = doc(db, 'locations', location ?? '');
         const locationDocSnapshot = await getDoc(locationDocRef);
 
         if (locationDocSnapshot.exists()) {
@@ -48,11 +49,11 @@ const LocationDetails = () => {
     // Randomly select items from the loot pool
     const obtainedItems = lootPool.filter((item) => Math.random() < item.probability);
 
-    if (obtainedItems.length > 0) {
-      await addToInventory(player?.id, obtainedItems);
-      console.log('Items added to player\'s inventory:', obtainedItems);
+    if (obtainedItems.length > 0 && player?.id) {
+      await addToInventory(player.id, obtainedItems);
+      setLastObtainedItems(obtainedItems.map((item) => item.itemName));
     } else {
-      console.log('No items obtained from exploring.');
+      setLastObtainedItems(['nothing!'])
     }
   };
 
@@ -68,6 +69,9 @@ const LocationDetails = () => {
         primaryText="Explore"
         rightElement={<button onClick={handleExplore}>Explore</button>}
       />
+      {lastObtainedItems.length > 0 && (
+        <p>You found: {lastObtainedItems.join(', ')}</p>
+      )}
       <h2>Available loot:</h2>
       {lootPool.map((item) => (
         <Card

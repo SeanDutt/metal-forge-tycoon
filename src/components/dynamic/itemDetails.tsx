@@ -1,29 +1,38 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { PlayerContext } from "../../data/playerContext";
-import { getRecipeForItemId, getRecipesByItemId } from "../../firebase";
-import Card from "../card";
+import { PlayerContext } from "../../data/playerContext.tsx";
+import { getRecipeForItemId, getRecipesByItemId } from "../../firebase.ts";
+import Card from "../card.tsx";
+import { Recipe } from "../../data/recipe.ts";
 
 const ItemDetails = () => {
-  const { itemId } = useParams(); // Retrieve the itemId from the URL parameter
+  const { itemId } = useParams<{ itemId: string }>(); // Retrieve the itemId from the URL parameter
+  
   const playerData = useContext(PlayerContext); // Access the player data from the context
-  const [recipeToCreate, setRecipeToCreate] = useState(null)
-  const [usedInRecipes, setUsedInRecipes] = useState([]);
+  const [recipeToCreate, setRecipeToCreate] = useState<Recipe>()
+  const [usedInRecipes, setUsedInRecipes] = useState<Recipe[]>([]);
 
   const loadItemDetails = async () => {
-    const recipeToCreateItem = await getRecipeForItemId(itemId);
-    const recipesUsingItem = await getRecipesByItemId(itemId);
-    setRecipeToCreate(recipeToCreateItem)
-    setUsedInRecipes(recipesUsingItem)
+    const recipeToCreateItem = await getRecipeForItemId(itemId ?? '');
+    recipeToCreateItem && setRecipeToCreate(recipeToCreateItem)
+
+    const recipesUsingItem = await getRecipesByItemId(itemId ?? '');
+    const updatedRecipes = recipesUsingItem.map((recipe) => ({
+      ...recipe,
+      output: {
+        name: recipe.output,
+      },
+    }));
+    setUsedInRecipes(updatedRecipes);
   };
 
   useEffect(() => {
     loadItemDetails();
-}, [itemId]);
+  }, [itemId]);
 
   // Retrieve the item quantity from the player's inventory data
-  const itemsOnHand = playerData?.inventory[itemId]?.ownedCurrent || 0;
-  const itemsLifetime = playerData?.inventory[itemId]?.ownedLifetime || 0;
+  const itemsOnHand = playerData?.inventory[itemId ?? '']?.ownedCurrent || 0;
+  const itemsLifetime = playerData?.inventory[itemId ?? '']?.ownedLifetime || 0;
 
   return (
     <div>
@@ -66,8 +75,8 @@ const ItemDetails = () => {
             {usedInRecipes.map((recipe, index) => (
               <Card 
                 key={index}
-                primaryText={recipe.output}
-                link={`/item/${recipe.output}`}
+                primaryText={recipe.output.name}
+                link={`/item/${recipe.output.name}`}
                 secondaryText={Object.entries(recipe.input)
                   .map(([itemName, quantity]) => (`${quantity}x ${itemName}`))}
               />

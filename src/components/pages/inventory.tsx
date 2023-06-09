@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { PlayerContext } from '../../data/playerContext';
-import Card from '../card';
+import { PlayerContext } from '../../data/playerContext.tsx';
+import Card from '../card.tsx';
 
 const Inventory = () => {
   const player = useContext(PlayerContext);

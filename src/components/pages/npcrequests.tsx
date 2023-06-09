@@ -1,7 +1,7 @@
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { db } from '../../firebase';
-import Card from '../card';
+import { db } from '../../firebase.ts';
+import Card from '../card.tsx';
 
 export interface NPCRequest {
   description: string;

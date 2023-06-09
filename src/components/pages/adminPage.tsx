@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import React from "react";
-import { db } from "../../firebase";
+import { db } from "../../firebase.ts";
 import "./adminPage.css";
+
 
 const createRecipe = async (
   outputItem: string,
