@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { DocumentData, collection, doc, getDoc, getDocs, getFirestore } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { Recipe } from "./data/recipe";
 import { Player } from "./data/player";
