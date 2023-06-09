@@ -10,7 +10,7 @@ import Inventory from './components/pages/inventory.tsx';
 import Footer from './components/footer.tsx';
 import Explore from './components/pages/explore.tsx';
 import LocationDetails from './components/dynamic/locationDetails.tsx';
-import { AdminPage } from './components/pages/adminPage.tsx';
+// import { AdminPage } from './components/pages/adminPage.tsx';
 import NPCRequests from './components/pages/npcrequests.tsx';
 import NPCRequestDetails from './components/dynamic/npcrequestDetails.tsx';
 

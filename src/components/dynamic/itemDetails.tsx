@@ -28,7 +28,7 @@ const ItemDetails = () => {
 
   useEffect(() => {
     loadItemDetails();
-  }, [itemId]);
+  });
 
   // Retrieve the item quantity from the player's inventory data
   const itemsOnHand = playerData?.inventory[itemId ?? '']?.ownedCurrent || 0;
