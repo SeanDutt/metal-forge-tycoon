@@ -32,7 +32,7 @@ export const PlayerProvider: React.FC<PlayerProviderProps> = ({ children, player
 
     // Clean up the listener when the component unmounts or the user logs out
     return () => unsubscribe();
-  }, []);
+  }, [playerId]);
 
   return (
     <PlayerContext.Provider value={playerData}>
