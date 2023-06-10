@@ -1,18 +1,25 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PlayerContext } from "../../data/playerContext.tsx";
-import { getRecipeForItemId, getRecipesByItemId } from "../../firebase.ts";
+import { getItemById, getRecipeForItemId, getRecipesByItemId } from "../../firebase.ts";
 import Card from "../card.tsx";
 import { Recipe } from "../../data/recipe.ts";
+import { Item } from "../../data/item.ts";
 
 const ItemDetails = () => {
   const { itemId } = useParams<{ itemId: string }>(); // Retrieve the itemId from the URL parameter
   
   const playerData = useContext(PlayerContext); // Access the player data from the context
+
+  const [itemDetails, setItemDetails] = useState<Item>()
   const [recipeToCreate, setRecipeToCreate] = useState<Recipe>()
   const [usedInRecipes, setUsedInRecipes] = useState<Recipe[]>([]);
 
   const loadItemDetails = async () => {
+    const itemFound = await getItemById(itemId ?? '');
+    if (itemFound) {setItemDetails(itemFound);}
+    console.log(itemFound)
+
     const recipeToCreateItem = await getRecipeForItemId(itemId ?? '');
     recipeToCreateItem && setRecipeToCreate(recipeToCreateItem)
 
@@ -28,7 +35,7 @@ const ItemDetails = () => {
 
   useEffect(() => {
     loadItemDetails();
-  });
+  }, [itemId]); // Add itemId as a dependency to the useEffect dependency array
 
   // Retrieve the item quantity from the player's inventory data
   const itemsOnHand = playerData?.inventory[itemId ?? '']?.ownedCurrent || 0;
@@ -38,6 +45,7 @@ const ItemDetails = () => {
     <div>
         <h1>{itemId}</h1>
         <h2>Item Details</h2>
+        {itemDetails?.imageUrl && <img src={require(`../../data/itemIcons/${itemDetails.imageUrl}`)} alt="" />}
         <Card primaryText={`Currently owned: ${itemsOnHand}`}/>
         <Card primaryText={`All-time owned: ${itemsLifetime}`}/>
         {recipeToCreate?.skillRequirements !== undefined && (

@@ -7,4 +7,4 @@ export interface Item {
 export interface InventoryItem extends Item {
     ownedCurrent?: number;
     ownedLifetime?: number;
-  }
+}

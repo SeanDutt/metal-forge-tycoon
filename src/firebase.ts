@@ -42,8 +42,8 @@ export async function getItemById(itemId: string): Promise<Item | null> {
       // Create an Item object based on the fetched data
       const item: Item = {
         name: itemId,
-        description: itemData.description,
-        imageUrl: itemData.imageURL,
+        description: itemData.itemDescription,
+        imageUrl: itemData.imageUrl,
         // Include other properties based on your Item interface
       };
 
