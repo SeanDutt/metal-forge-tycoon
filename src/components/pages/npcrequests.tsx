@@ -9,7 +9,8 @@ export interface NPCRequest {
   from: string;
   requestedItems: object;
   grantedItems: object;
-  skillRequirements: object;
+  skillRequirements?: object;
+  imageUrl?: string;
 }
 
 const NPCRequests = () => {
@@ -39,7 +40,9 @@ const NPCRequests = () => {
       {requests.map((request) => (
         <Card
           key={request.id}
+          icon={request.imageUrl ? require(`../../data/requestIcons/${request.imageUrl}`) : null}
           primaryText={request.id}
+          secondaryText={[`Request from ${request.from}`]}
           link={`/Requests/${request.id}`}
         />
       ))}

@@ -1,31 +1,50 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PlayerContext } from '../../data/playerContext.tsx';
 import Card from '../card.tsx';
+import { getItemById } from '../../firebase.ts';
 
 const Inventory = () => {
   const player = useContext(PlayerContext);
+  const [itemCards, setItemCards] = useState<React.ReactNode[]>([]);
+
+  useEffect(() => {
+    const fetchInventoryItems = async () => {
+      if (player) {
+        const inventoryItems = Object.entries(player.inventory);
+
+        const itemCardPromises = inventoryItems.map(async ([itemName, itemData]) => {
+          const item = await getItemById(itemName);
+          const imageUrl = item?.imageUrl || ''; // Set a default value if imageUrl is undefined
+
+          return (
+            <Card
+              key={itemName}
+              icon={imageUrl ? require(`../../data/itemIcons/${imageUrl}`) : null}
+              primaryText={itemName}
+              rightElement={`${itemData.ownedCurrent}`}
+              link={`/item/${itemName}`}
+            />
+          );
+        });
+
+        const resolvedItemCards = await Promise.all(itemCardPromises);
+        setItemCards(resolvedItemCards);
+      }
+    };
+
+    fetchInventoryItems();
+  }, [player]);
 
   if (!player) {
     // Handle case when player data is not available
     return <div>Loading...</div>;
   }
 
-  const renderInventoryItems = () => {
-    return Object.entries(player.inventory).map(([itemName, itemData]) => (
-      <Card 
-        key={itemName} 
-        primaryText={itemName} 
-        rightElement={`${itemData.ownedCurrent}`} 
-        link={`/item/${itemName}`}
-      />
-    ));
-  };
-
   return (
     <div>
       <h2>Inventory</h2>
       {Object.keys(player.inventory).length > 0 ? (
-        renderInventoryItems()
+        <div>{itemCards}</div>
       ) : (
         <p>No items in inventory.</p>
       )}

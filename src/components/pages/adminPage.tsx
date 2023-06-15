@@ -7,7 +7,7 @@ import "./adminPage.css";
 
 const createRecipe = async (
   outputItem: string,
-  skillRequirementsTemp = {},
+  skillRequirements = {},
   inputItems: Object
   ) => {
   try {
@@ -33,7 +33,7 @@ const createRecipe = async (
     // Create a new recipe document with the provided input and skill requirements
     await setDoc(doc(db,"recipes",outputItem), {
       input: inputItems,
-      skillRequirements: skillRequirementsTemp,
+      skillRequirements: skillRequirements,
       output: outputItem
     });
   } catch (error) {
@@ -103,7 +103,7 @@ const createNPCRequest = async (
 
 // outputItem: string, skillRequirementsTemp = {}, inputItems: Object
 
-// createRecipe("Metal gear", undefined, {"Scrap Metal":10});
+createRecipe("Soil", undefined, {"Dirt":3, "Bone":1});
 
 
 // imageUrl: string = '', itemName: string, itemDescription: string = ''

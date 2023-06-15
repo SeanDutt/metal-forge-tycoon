@@ -76,6 +76,7 @@ export async function getAllRecipes() {
         skillRequirements: recipeData.skillRequirements,
       };
     });
+    recipes.sort((a, b) => a.output.localeCompare(b.output));
 
     return recipes;
   } catch (error) {
@@ -150,6 +151,7 @@ export async function getRecipesByItemId(itemId: string) {
           recipe.input.hasOwnProperty(itemId)
         );
       });
+      recipes.sort((a, b) => a.output.localeCompare(b.output));
 
     return recipes;
   } catch (error) {

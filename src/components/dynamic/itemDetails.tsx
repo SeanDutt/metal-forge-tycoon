@@ -18,7 +18,6 @@ const ItemDetails = () => {
   const loadItemDetails = async () => {
     const itemFound = await getItemById(itemId ?? '');
     if (itemFound) {setItemDetails(itemFound);}
-    console.log(itemFound)
 
     const recipeToCreateItem = await getRecipeForItemId(itemId ?? '');
     recipeToCreateItem && setRecipeToCreate(recipeToCreateItem)
@@ -45,7 +44,10 @@ const ItemDetails = () => {
     <div>
         <h1>{itemId}</h1>
         <h2>Item Details</h2>
-        {itemDetails?.imageUrl && <img src={require(`../../data/itemIcons/${itemDetails.imageUrl}`)} alt="" />}
+        {itemDetails?.imageUrl && 
+          <img src={require(`../../data/itemIcons/${itemDetails.imageUrl}`)} 
+            alt="" 
+            style={{ width: '100vw' }} />}
         <Card primaryText={`Currently owned: ${itemsOnHand}`}/>
         <Card primaryText={`All-time owned: ${itemsLifetime}`}/>
         {recipeToCreate?.skillRequirements !== undefined && (

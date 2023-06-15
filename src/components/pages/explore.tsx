@@ -8,6 +8,7 @@ export interface ExploreLocation {
   name: string;
   description: string;
   lootPool: Record<string, number>;
+  imageUrl?: string;
 }
 
 const Explore = () => {
@@ -34,6 +35,9 @@ const Explore = () => {
       {locations.map((location) => (
         <Card
           key={location.name}
+          icon={location.imageUrl 
+            ? require(`../../data/exploreIcons/${location.imageUrl}`) 
+            : undefined}
           primaryText={location.name}
           secondaryText={[location.description]}
           link={`/Explore/${location.name}`}

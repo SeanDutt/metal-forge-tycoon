@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PlayerContext } from "../../data/playerContext.tsx";
 import { Recipe } from "../../data/recipe.tsx";
-import { getRecipesBySkill } from "../../firebase.ts";
+import { getItemById, getRecipesBySkill } from "../../firebase.ts";
 import { addToInventory } from "../../utils/inventoryUtils.tsx";
 import Card from "../card.tsx";
 
@@ -24,7 +24,20 @@ const Workshop: React.FC = () => {
   useEffect(() => {
     async function fetchRecipesData() {
       const fetchedRecipes = await getRecipesBySkill(playerData);
-      setRecipes(fetchedRecipes);
+  
+      const recipesWithImageUrls = await Promise.all(
+        fetchedRecipes.map(async (recipe) => {
+          const outputItemData = await getItemById(recipe.output.name);
+          const imageUrl = outputItemData?.imageUrl || ""; // Set a default value if imageUrl is undefined
+  
+          return {
+            ...recipe,
+            imageUrl,
+          };
+        })
+      );
+  
+      setRecipes(recipesWithImageUrls);
     }
   
     fetchRecipesData();
@@ -84,15 +97,13 @@ const Workshop: React.FC = () => {
       {recipes.map((recipe, index) => (
         <Card
           key={index}
+          icon={recipe.imageUrl ? require(`../../data/itemIcons/${recipe.imageUrl}`) : null}
           primaryText={`${recipe?.output.name}`}
           secondaryText={
             recipe?.input &&
-            Object.entries(recipe.input).map(
-              ([item, amount]) =>
-                `${item}: ${
-                  playerData?.inventory[item]?.ownedCurrent || 0
-                } / ${amount}`
-            )
+            Object.entries(recipe.input)
+            .sort(([itemA], [itemB]) => itemA.localeCompare(itemB)) // Sort the entries alphabetically
+            .map(([item, amount]) => `${item}: ${playerData?.inventory[item]?.ownedCurrent || 0} / ${amount}`)
           }
           rightElement={
             <button onClick={() => handleCraft(recipe)}>Craft</button>

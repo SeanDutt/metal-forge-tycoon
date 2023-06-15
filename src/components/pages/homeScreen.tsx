@@ -4,6 +4,7 @@ import Card from "../card.tsx";
 export interface HomeScreenComponent {
   name: string;
   text: string;
+  imageUrl?: string;
 }
 
 interface HomeScreenProps {
@@ -13,10 +14,10 @@ interface HomeScreenProps {
 function HomeScreen({ components }: HomeScreenProps ) {
     return (
       <div>
-        <h1>Home Screen</h1>
           {components.map((component, index: number) => (
             <Card 
               key={index}
+              icon={component.imageUrl ? require(`../../data/${component.imageUrl}`) : null}
               primaryText={component.name}
               secondaryText={[component.text] || ''}
               link={`/${component.name}`}

@@ -7,6 +7,12 @@
   pointer-events: none;
 }
 
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #1a1a1a;
+  color: #fff
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -21,7 +27,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: #fff;
 }
 
 .App-link {

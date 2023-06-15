@@ -2,20 +2,21 @@ import { doc, getDoc } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { PlayerContext } from "../../data/playerContext.tsx";
-import { db } from '../../firebase.ts';
+import { db, getItemById } from '../../firebase.ts';
 import { addToInventory } from "../../utils/inventoryUtils.tsx";
 import Card from '../card.tsx';
 import { ExploreLocation } from '../pages/explore.tsx';
 
 interface LootPoolItem {
   itemName: string,
-  probability: number
+  probability: number,
+  imageUrl: string
 }
 
 const LocationDetails = () => {
   const { location } = useParams();
   const player = useContext(PlayerContext);
-  const [locationData, setLocationData] = useState<ExploreLocation>();
+  const [locationData, setLocationData] = useState<ExploreLocation | null>(null);
   const [lootPool, setLootPool] = useState<LootPoolItem[]>([]);
   const [lastObtainedItems, setLastObtainedItems] = useState<string[]>([]);
 
@@ -28,13 +29,6 @@ const LocationDetails = () => {
         if (locationDocSnapshot.exists()) {
           const locationData = locationDocSnapshot.data();
           setLocationData(locationData as ExploreLocation);
-
-          const lootPoolItems = locationData.lootPool || {};
-          const lootPool = Object.entries(lootPoolItems).map(([itemName, probability]) => ({
-            itemName,
-            probability,
-          }));
-          setLootPool(lootPool as LootPoolItem[]);
         } else {
           console.log('Location document does not exist.');
         }
@@ -44,6 +38,30 @@ const LocationDetails = () => {
     };
     location && fetchLocationData();
   }, [location]);
+
+  useEffect(() => {
+    const fetchLootPoolItems = async () => {
+      if (locationData) {
+        const lootPoolItems = locationData.lootPool || {};
+        const lootPool = await Promise.all(
+          Object.entries(lootPoolItems).map(async ([itemName, probability]) => {
+            const itemData = await getItemById(itemName);
+            const imageUrl = itemData?.imageUrl || ''; // Set a default value if imageUrl is undefined
+    
+            return {
+              itemName,
+              probability,
+              imageUrl,
+            };
+          })
+        );
+    
+        setLootPool(lootPool);
+      }
+    };
+
+    fetchLootPoolItems();
+  }, [locationData]);
 
   const handleExplore = async () => {
     // Randomly select items from the loot pool
@@ -65,6 +83,9 @@ const LocationDetails = () => {
   return (
     <div>
       <h1>{location}</h1>
+      {locationData.imageUrl && 
+            <img src={require(`../../data/exploreIcons/${locationData.imageUrl}`)} alt="Explore location icon" />}
+
       <Card
         primaryText="Explore"
         rightElement={<button onClick={handleExplore}>Explore</button>}
@@ -73,15 +94,18 @@ const LocationDetails = () => {
         <p>You found: {lastObtainedItems.join(', ')}</p>
       )}
       <h2>Available loot:</h2>
-      {lootPool.map((item) => (
-        <Card
-          key={item.itemName}
-          primaryText={item.itemName}
-          link={`/item/${item.itemName}`}
-        />
+      {lootPool
+        .sort((a, b) => b.probability - a.probability) // Sort by probability in descending order
+        .map((item) => (
+          <Card
+            key={item.itemName}
+            icon={item.imageUrl ? require(`../../data/itemIcons/${item.imageUrl}`) : null}
+            primaryText={item.itemName}
+            link={`/item/${item.itemName}`}
+          />
       ))}
     </div>
   );
 };
-  
-export default LocationDetails
+
+export default LocationDetails;
