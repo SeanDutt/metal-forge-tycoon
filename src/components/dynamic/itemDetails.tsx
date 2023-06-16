@@ -15,26 +15,29 @@ const ItemDetails = () => {
   const [recipeToCreate, setRecipeToCreate] = useState<Recipe>()
   const [usedInRecipes, setUsedInRecipes] = useState<Recipe[]>([]);
 
-  const loadItemDetails = async () => {
-    const itemFound = await getItemById(itemId ?? '');
-    if (itemFound) {setItemDetails(itemFound);}
-
-    const recipeToCreateItem = await getRecipeForItemId(itemId ?? '');
-    recipeToCreateItem && setRecipeToCreate(recipeToCreateItem)
-
-    const recipesUsingItem = await getRecipesByItemId(itemId ?? '');
-    const updatedRecipes = recipesUsingItem.map((recipe) => ({
-      ...recipe,
-      output: {
-        name: recipe.output,
-      },
-    }));
-    setUsedInRecipes(updatedRecipes);
-  };
-
   useEffect(() => {
+    const loadItemDetails = async () => {
+      const itemFound = await getItemById(itemId ?? '');
+      if (itemFound) {
+        setItemDetails(itemFound);
+      }
+  
+      const recipeToCreateItem = await getRecipeForItemId(itemId ?? '');
+      recipeToCreateItem && setRecipeToCreate(recipeToCreateItem);
+  
+      const recipesUsingItem = await getRecipesByItemId(itemId ?? '');
+      const updatedRecipes = recipesUsingItem.map((recipe) => ({
+        ...recipe,
+        output: {
+          name: recipe.output,
+        },
+      }));
+      setUsedInRecipes(updatedRecipes);
+    };
+  
     loadItemDetails();
   }, [itemId]); // Add itemId as a dependency to the useEffect dependency array
+  
 
   // Retrieve the item quantity from the player's inventory data
   const itemsOnHand = playerData?.inventory[itemId ?? '']?.ownedCurrent || 0;
