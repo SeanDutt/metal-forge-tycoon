@@ -13,7 +13,7 @@ const defaultPlayer: Player = {
   id: '',
   inventory: {},
   skillLevels: {},
-  completedQuests: []
+  completedRequests: {}
 };
 
 export const PlayerContext = createContext<Player>(defaultPlayer);

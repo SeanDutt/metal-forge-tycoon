@@ -8,7 +8,7 @@ export async function createPlayer(uid: string, displayName: string): Promise<vo
         displayName: displayName,
         inventory: {},
         skillLevels: {},
-        completedQuests: []
+        completedRequests: {}
     }
     try {
     const playerDocRef = doc(db, "players", uid);

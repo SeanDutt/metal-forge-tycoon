@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PlayerContext } from "../../data/playerContext.tsx";
 import { Recipe } from "../../data/recipe.tsx";
-import { getItemById, getRecipesBySkill } from "../../firebase.ts";
+import { getRecipesBySkill } from "../../firebase.ts";
 import { addToInventory } from "../../utils/inventoryUtils.tsx";
 import Card from "../card.tsx";
 
@@ -24,49 +24,39 @@ const Workshop: React.FC = () => {
   useEffect(() => {
     async function fetchRecipesData() {
       const fetchedRecipes = await getRecipesBySkill(playerData);
-  
-      const recipesWithImageUrls = await Promise.all(
-        fetchedRecipes.map(async (recipe) => {
-          const outputItemData = await getItemById(recipe.output.name);
-          const imageUrl = outputItemData?.imageUrl || ""; // Set a default value if imageUrl is undefined
-  
-          return {
-            ...recipe,
-            imageUrl,
-          };
-        })
-      );
-  
-      setRecipes(recipesWithImageUrls);
+      setRecipes(fetchedRecipes);
     }
-  
     fetchRecipesData();
   }, [playerData]);
 
   const handleCraft = async (recipe: Recipe) => {
     const { input, output } = recipe;
-  
-    const hasRequiredItems = Object.entries(input).every(([itemName, quantity]) => {
-      const inventoryItem = playerData?.inventory?.[itemName];
-      return (
-        inventoryItem &&
-        typeof inventoryItem.ownedCurrent === "number" &&
-        inventoryItem.ownedCurrent >= quantity
-      );
-    });
-  
+
+    const hasRequiredItems = Object.entries(input).every(
+      ([itemName, quantity]) => {
+        const inventoryItem = playerData?.inventory?.[itemName];
+        return (
+          inventoryItem &&
+          typeof inventoryItem.ownedCurrent === "number" &&
+          inventoryItem.ownedCurrent >= quantity
+        );
+      }
+    );
+
     if (hasRequiredItems) {
-      const itemsToUpdate = Object.entries(input).map(([itemName, quantity]) => {
-        const updatedQuantity = -quantity;
-        return { itemName, quantity: updatedQuantity };
-      });
-  
+      const itemsToUpdate = Object.entries(input).map(
+        ([itemName, quantity]) => {
+          const updatedQuantity = -quantity;
+          return { itemName, quantity: updatedQuantity };
+        }
+      );
+
       itemsToUpdate.push({ itemName: output.name, quantity: 1 });
-  
+
       await addToInventory(playerData?.id, itemsToUpdate);
     }
   };
-  
+
   //   const filteredRecipes = recipes.filter((recipe) => {
   //     // Filter based on skill requirements
   //     const hasSkillRequirement = recipe.skillRequired.every(
@@ -97,13 +87,22 @@ const Workshop: React.FC = () => {
       {recipes.map((recipe, index) => (
         <Card
           key={index}
-          icon={recipe.imageUrl ? require(`../../data/itemIcons/${recipe.imageUrl}`) : null}
+          icon={
+            recipe.output
+              ? require(`../../data/itemIcons/${recipe.output.name}.png`)
+              : null
+          }
           primaryText={`${recipe?.output.name}`}
           secondaryText={
             recipe?.input &&
             Object.entries(recipe.input)
-            .sort(([itemA], [itemB]) => itemA.localeCompare(itemB)) // Sort the entries alphabetically
-            .map(([item, amount]) => `${item}: ${playerData?.inventory[item]?.ownedCurrent || 0} / ${amount}`)
+              .sort(([itemA], [itemB]) => itemA.localeCompare(itemB)) // Sort the entries alphabetically
+              .map(
+                ([item, amount]) =>
+                  `${item}: ${
+                    playerData?.inventory[item]?.ownedCurrent || 0
+                  } / ${amount}`
+              )
           }
           rightElement={
             <button onClick={() => handleCraft(recipe)}>Craft</button>

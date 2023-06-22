@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { PlayerContext } from '../../data/playerContext.tsx';
-import Card from '../card.tsx';
-import { getItemById } from '../../firebase.ts';
+import React, { useContext, useEffect, useState } from "react";
+import { PlayerContext } from "../../data/playerContext.tsx";
+import Card from "../card.tsx";
+import { getItemById } from "../../firebase.ts";
 
 const Inventory = () => {
   const player = useContext(PlayerContext);
@@ -12,20 +12,21 @@ const Inventory = () => {
       if (player) {
         const inventoryItems = Object.entries(player.inventory);
 
-        const itemCardPromises = inventoryItems.map(async ([itemName, itemData]) => {
-          const item = await getItemById(itemName);
-          const imageUrl = item?.imageUrl || ''; // Set a default value if imageUrl is undefined
+        const itemCardPromises = inventoryItems.map(
+          async ([itemName, itemData]) => {
+            const item = await getItemById(itemName);
 
-          return (
-            <Card
-              key={itemName}
-              icon={imageUrl ? require(`../../data/itemIcons/${imageUrl}`) : null}
-              primaryText={itemName}
-              rightElement={`${itemData.ownedCurrent}`}
-              link={`/item/${itemName}`}
-            />
-          );
-        });
+            return (
+              <Card
+                key={itemName}
+                icon={item ? require(`../../data/itemIcons/${itemName}.png`) : null}
+                primaryText={itemName}
+                rightElement={`${itemData.ownedCurrent}`}
+                link={`/item/${itemName}`}
+              />
+            );
+          }
+        );
 
         const resolvedItemCards = await Promise.all(itemCardPromises);
         setItemCards(resolvedItemCards);

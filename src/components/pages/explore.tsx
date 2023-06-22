@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import Card from '../card.tsx';
-import React from 'react';
-import { db } from '../../firebase.ts';
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import Card from "../card.tsx";
+import React from "react";
+import { db } from "../../firebase.ts";
 
 export interface ExploreLocation {
   name: string;
   description: string;
   lootPool: Record<string, number>;
-  imageUrl?: string;
 }
 
 const Explore = () => {
@@ -35,9 +34,11 @@ const Explore = () => {
       {locations.map((location) => (
         <Card
           key={location.name}
-          icon={location.imageUrl 
-            ? require(`../../data/exploreIcons/${location.imageUrl}`) 
-            : undefined}
+          icon={
+            location.name
+              ? require(`../../data/exploreIcons/${location.name}.png`)
+              : undefined
+          }
           primaryText={location.name}
           secondaryText={[location.description]}
           link={`/Explore/${location.name}`}
@@ -46,5 +47,5 @@ const Explore = () => {
     </div>
   );
 };
-  
+
 export default Explore;

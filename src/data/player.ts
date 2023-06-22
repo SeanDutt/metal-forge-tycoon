@@ -3,5 +3,5 @@ export interface Player {
     id: string;
     inventory: Record<string, { ownedCurrent: number; ownedLifetime: number }>;
     skillLevels: Record<string, number>;
-    completedQuests: { questId: string; completionDate: string }[];
+    completedRequests: { requestChain?: string, completed?: [{questId: string; completionDate: string}] };
 }
