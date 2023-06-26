@@ -1,10 +1,9 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import HomeScreen, {
   HomeScreenComponent,
 } from "./components/pages/homeScreen.tsx";
 import ItemDetails from "./components/dynamic/itemDetails.tsx";
-import AuthComponent from "./components/pages/registration.tsx";
 import "./components/card.css";
 import "./App.css";
 import Workshop from "./components/pages/workshop.tsx";
@@ -18,11 +17,38 @@ import NPCRequests from "./components/pages/npcrequests.tsx";
 import NPCRequestDetails from "./components/dynamic/npcrequestDetails.tsx";
 import ProductionBuildings from "./components/pages/production.tsx";
 import BuildingDetails from "./components/dynamic/buildingDetails.tsx";
-import { AdminPage } from "./components/pages/adminPage.tsx";
-
-const playerId = "mw0fv8p34Deta2SOLqetLkYeisF3";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const App: React.FC = () => {
+  const [playerId, setPlayerId] = useState<string>("");
+
+  const checkAuthentication = (): Promise<string> => {
+    const auth = getAuth();
+    return new Promise((resolve, reject) => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // Resolve with the player ID
+          console.log(user.uid)
+          resolve(user.uid);
+        } else {
+          reject(new Error("User not logged in"));
+        }
+      });
+    });
+  };
+  
+  useEffect(() => {
+    checkAuthentication()
+      .then((uid) => {
+        setPlayerId(uid);
+      })
+      .catch((error) => {
+        console.log("User not logged in:", error);
+        Navigate({to: "/register"});
+      });
+
+  }, [playerId]);
+
   const components: HomeScreenComponent[] = [
     {
       name: "Inventory",
@@ -42,17 +68,22 @@ const App: React.FC = () => {
     {
       name: "Requests",
       text: "What do you want?",
-      imageUrl: "requestIcons/woody.png",
+      imageUrl: "requestIcons/Woody.png",
     },
     {
       name: "Buildings",
       text: "Manage automatic resources.",
       imageUrl: "buildingIcons/Tree Farm.png",
     },
-    { name: 'Admin', text: 'Create things' },
+    // { name: 'Admin', text: 'Create things' },
     // { name: 'Register', text: '' },
     // Add more components to the array
   ];
+
+  if (!playerId) {
+    // Handle case when player data is not available
+    return <div>Loading...</div>;
+  }
 
   return (
     <PlayerProvider playerId={playerId}>
@@ -73,8 +104,8 @@ const App: React.FC = () => {
           
           <Route path="/requests" element={<NPCRequests />} />
           <Route path="/requests/:npcRequestId" element={<NPCRequestDetails />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/register" element={<AuthComponent />} />
+          {/* <Route path="/admin" element={<AdminPage />} />
+          <Route path="/register" element={<AuthComponent />} /> */}
         </Routes>
         <Footer />
       </Router>

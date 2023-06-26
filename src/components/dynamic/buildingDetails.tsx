@@ -15,7 +15,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase";
-import { doesPlayerMeetInventoryRequirements } from "../../utils/requirements";
+import { doesPlayerMeetRequirements } from "../../utils/requirements";
 
 interface PlayerBuildingData {
   autoCollect: boolean;
@@ -87,7 +87,7 @@ const BuildingDetails = () => {
             ? lastRetrieved.toDate()
             : null;
           const currentTime = Timestamp.now().toDate();
-          console.log('curr, last: ', currentTime, lastRetrievedTime);
+          console.log("curr, last: ", currentTime, lastRetrievedTime);
 
           const minutesSinceRetrieval = lastRetrievedTime
             ? Math.floor(
@@ -124,7 +124,7 @@ const BuildingDetails = () => {
     };
 
     fetchBuildingData();
-  }, [buildingId, playerData.id]);
+  }, [buildingId, playerBuildingData, playerData.id]);
 
   const calculateUpgradeCost = () => {
     const { level } = playerBuildingData || {};
@@ -159,10 +159,7 @@ const BuildingDetails = () => {
     );
 
     // Check if the player has enough resources to perform the upgrade
-    const canUpgrade = doesPlayerMeetInventoryRequirements(
-      playerData,
-      upgradeCost
-    );
+    const canUpgrade = doesPlayerMeetRequirements(playerData, upgradeCost);
 
     if (canUpgrade && playerBuildingData) {
       try {
@@ -250,7 +247,9 @@ const BuildingDetails = () => {
         }`}
         rightElement={
           !playerBuildingData?.autoCollect && (
-            <button disabled={collectedProduct === 0} onClick={handleCollect}>Collect</button>
+            <button disabled={collectedProduct === 0} onClick={handleCollect}>
+              Collect
+            </button>
           )
         }
       />
@@ -263,9 +262,7 @@ const BuildingDetails = () => {
         ]}
         rightElement={
           <button
-            disabled={
-              !doesPlayerMeetInventoryRequirements(playerData, upgradeCost)
-            }
+            disabled={!doesPlayerMeetRequirements(playerData, upgradeCost)}
             onClick={handleUpgrade}
           >
             Upgrade

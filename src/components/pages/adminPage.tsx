@@ -120,13 +120,13 @@ type NpcRequest = {
 
 const questChainId = "Woody Wants Wood"; // This represents the document ID of the request chain
 const quest: NpcRequest = {
-  name: "Woody's Timber Trove",
+  name: "Woody's Wooden Wonder",
   description: 
-  "Listen up, partner. Name's Woody. Ain't much of a talker, as you see. But I got a thing for wood, ya know? See, there's this secret about me, a past life nobody knows. I used to be a woodchuck, scurrying 'round the trees, gnawing on logs and such. But here I am, a human now, still drawn to the scent of timber.<br><br>I've been gatherin' wood like a madman, hidin' it away from prying eyes. But it's gettin' a bit much for me to handle alone. That's where you come in. I need your help to find more wood, build my stash, and keep my secret safe. Can I count on ya?",
+  "In the depths of the forest, Woody awaits, silently continuing his pursuit of wood. Having assisted him in expanding his timber trove, you have proven yourself as a trusted ally. Now, Woody seeks to put the collected wood to good use. Can you aid him in his newfound ambition of crafting wooden wonders?<br><br>Listen up, partner. Woody here. You've been a reliable help in gatherin' all that wood. It's time to put it to use. See, I got this itch to create somethin' out of these logs and planks. Got a few ideas swirlin' around in my head, and I reckon you might just have the skills to make 'em a reality.<br><br>But I ain't askin' you to do all the work. No, we'll be partners in this endeavor. I'll share my vision, and you'll help me bring it to life. Together, we'll craft masterpieces that'll make folks' jaws drop. Ready to get your hands dirty, partner?<br><br>Remember, partner, this ain't just about craftin' wood. It's about makin' a mark, leavin' behind somethin' that'll make folks remember. We'll be the talk of the town with our skills and creativity. Let's embark on this woodworkin' journey together.",
   from: "Woody",
   grantedItems: [],
-  requestedItems: {"Wood": 100},
-  requirements: {skills: {}, quests:[], items:{"Wood":1}}
+  requestedItems: {"Tool":15,"Wood":400,"Oil":10},
+  requirements: {skills: {}, quests:[], items:{}}
 };
 
 //createRequestInChain(questChainId, quest);
