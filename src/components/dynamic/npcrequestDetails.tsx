@@ -82,8 +82,6 @@ const NPCRequestDetails = () => {
             throw new Error("Request found");
           }
         });
-
-        console.log("NPC Request not found.");
       } catch (error) {
         console.error("Error fetching NPC request:", error);
       }
@@ -119,8 +117,6 @@ const NPCRequestDetails = () => {
     npcRequest.requestedItems as Record<string, number>;
   const grantedItems: Record<string, number> =
     npcRequest.grantedItems as Record<string, number>;
-
-  console.log(npcRequest.requestedItems);
 
   return (
     <div>

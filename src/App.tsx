@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import HomeScreen, {
   HomeScreenComponent,
 } from "./components/pages/homeScreen.tsx";
@@ -17,37 +22,24 @@ import NPCRequests from "./components/pages/npcrequests.tsx";
 import NPCRequestDetails from "./components/dynamic/npcrequestDetails.tsx";
 import ProductionBuildings from "./components/pages/production.tsx";
 import BuildingDetails from "./components/dynamic/buildingDetails.tsx";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase.ts";
+import AuthComponent from "./components/pages/registration.tsx";
 
 const App: React.FC = () => {
-  const [playerId, setPlayerId] = useState<string>("");
+  const [playerId, setPlayerId] = useState<string | null>(null);
 
-  const checkAuthentication = (): Promise<string> => {
-    const auth = getAuth();
-    return new Promise((resolve, reject) => {
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          // Resolve with the player ID
-          console.log(user.uid)
-          resolve(user.uid);
-        } else {
-          reject(new Error("User not logged in"));
-        }
-      });
-    });
-  };
-  
   useEffect(() => {
-    checkAuthentication()
-      .then((uid) => {
-        setPlayerId(uid);
-      })
-      .catch((error) => {
-        console.log("User not logged in:", error);
-        Navigate({to: "/register"});
-      });
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setPlayerId(user.uid);
+      } else {
+        setPlayerId(null);
+      }
+    });
 
-  }, [playerId]);
+    return () => unsubscribe();
+  }, []);
 
   const components: HomeScreenComponent[] = [
     {
@@ -80,9 +72,15 @@ const App: React.FC = () => {
     // Add more components to the array
   ];
 
-  if (!playerId) {
-    // Handle case when player data is not available
-    return <div>Loading...</div>;
+  if (playerId === null) {
+    // User not logged in
+    return (
+      <Router>
+        <Routes>
+          <Route path="/" element={<AuthComponent />} />
+        </Routes>
+      </Router>
+    );
   }
 
   return (
@@ -95,15 +93,18 @@ const App: React.FC = () => {
           <Route path="/inventory" element={<Inventory />} />
 
           <Route path="/buildings" element={<ProductionBuildings />} />
-          <Route path="/buildings/:buildingId" element={<BuildingDetails />} /> 
-          
+          <Route path="/buildings/:buildingId" element={<BuildingDetails />} />
+
           <Route path="/item/:itemId" element={<ItemDetails />} />
-          
+
           <Route path="/explore" element={<Explore />} />
           <Route path="/explore/:location" element={<LocationDetails />} />
-          
+
           <Route path="/requests" element={<NPCRequests />} />
-          <Route path="/requests/:npcRequestId" element={<NPCRequestDetails />} />
+          <Route
+            path="/requests/:npcRequestId"
+            element={<NPCRequestDetails />}
+          />
           {/* <Route path="/admin" element={<AdminPage />} />
           <Route path="/register" element={<AuthComponent />} /> */}
         </Routes>
