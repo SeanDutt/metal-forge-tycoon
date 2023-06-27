@@ -87,7 +87,6 @@ const BuildingDetails = () => {
             ? lastRetrieved.toDate()
             : null;
           const currentTime = Timestamp.now().toDate();
-          console.log("curr, last: ", currentTime, lastRetrievedTime);
 
           const minutesSinceRetrieval = lastRetrievedTime
             ? Math.floor(
@@ -179,12 +178,10 @@ const BuildingDetails = () => {
 
         // Show success message or perform any other actions
         calculateUpgradeCost();
-        console.log("Upgrade successful!");
       } catch (error) {
         console.error("Upgrade failed:", error);
       }
     } else {
-      console.log("Insufficient resources to perform the upgrade!");
     }
   };
 
@@ -218,7 +215,6 @@ const BuildingDetails = () => {
 
         // Reset the collected product state
         setCollectedProduct(0);
-        console.log("Product collected successfully!");
       } catch (error) {
         console.error("Error collecting product:", error);
       }

@@ -14,7 +14,6 @@ function AuthComponent() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await createPlayer(userCredential.user.uid, displayName);
-      console.log("User and player created successfully!");
       setIsRegistered(true);
     } catch (error) {
       // Registration failed
@@ -24,9 +23,8 @@ function AuthComponent() {
 
   const handleLogin = async () => {
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       // Handle the login success, e.g., redirect to the game
-      console.log("User logged in:", user);
       navigate("/");
     } catch (error) {
       // Login failed

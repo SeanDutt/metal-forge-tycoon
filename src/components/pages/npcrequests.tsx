@@ -23,7 +23,6 @@ const getCompletedRequestsInChain = async (
 
     if (playerDocSnapshot.exists()) {
       const playerData = playerDocSnapshot.data();
-      console.log("getting data:", playerData);
       const completedRequests = playerData?.requests || [];
       return completedRequests.length;
     }

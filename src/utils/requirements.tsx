@@ -3,9 +3,7 @@ import { Player } from "../data/player";
 export function doesPlayerMeetRequirements(player: Player, requirements: Record<string, any>): boolean {
   const skillRequirements = requirements.skills || {};
   const itemRequirements = requirements.items || {};
-  const requestRequirements = requirements.requests || {};
-
-  console.log(itemRequirements)
+  // const requestRequirements = requirements.requests || {};
 
   for (const skillName in skillRequirements) {
     const requiredSkillLevel = skillRequirements[skillName];
