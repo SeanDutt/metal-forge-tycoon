@@ -19,7 +19,6 @@ const Workshop: React.FC = () => {
   const playerData = useContext(PlayerContext);
 
   // Access the crafting skill level
-  const craftingSkillLevel = 0;
 
   useEffect(() => {
     async function fetchRecipesData() {
