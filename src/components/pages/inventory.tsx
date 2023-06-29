@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PlayerContext } from "../../data/playerContext.tsx";
 import Card from "../card.tsx";
-import { getItemById } from "../../firebase.ts";
+import { db, getItemById } from "../../firebase.ts";
+import { getDocs, collection } from "firebase/firestore";
 
 const Inventory = () => {
   const player = useContext(PlayerContext);
@@ -10,26 +11,38 @@ const Inventory = () => {
   useEffect(() => {
     const fetchInventoryItems = async () => {
       if (player) {
-        const inventoryItems = Object.entries(player.inventory);
+        try {
+          const inventoryItemsSnapshot = await getDocs(
+            collection(db, "players", player.id, "inventory")
+          );
 
-        const itemCardPromises = inventoryItems.map(
-          async ([itemName, itemData]) => {
-            const item = await getItemById(itemName);
+          const itemCardPromises = inventoryItemsSnapshot.docs.map(
+            async (doc) => {
+              const itemData = doc.data();
+              const itemName = doc.id;
+              const item = await getItemById(itemName);
 
-            return (
-              <Card
-                key={itemName}
-                icon={item ? require(`../../data/itemIcons/${itemName}.png`) : null}
-                primaryText={itemName}
-                rightElement={`${itemData.ownedCurrent}`}
-                link={`/item/${itemName}`}
-              />
-            );
-          }
-        );
+              return (
+                <Card
+                  key={itemName}
+                  icon={
+                    item
+                      ? require(`../../data/itemIcons/${itemName}.png`)
+                      : require(`../../data/itemIcons/NoIcon.png`)
+                  }
+                  primaryText={itemName}
+                  rightElement={`${itemData.ownedCurrent}`}
+                  link={`/item/${itemName}`}
+                />
+              );
+            }
+          );
 
-        const resolvedItemCards = await Promise.all(itemCardPromises);
-        setItemCards(resolvedItemCards);
+          const resolvedItemCards = await Promise.all(itemCardPromises);
+          setItemCards(resolvedItemCards);
+        } catch (error) {
+          console.error("Error fetching inventory items:", error);
+        }
       }
     };
 
@@ -44,7 +57,7 @@ const Inventory = () => {
   return (
     <div>
       <h2>Inventory</h2>
-      {Object.keys(player.inventory).length > 0 ? (
+      {itemCards.length > 0 ? (
         <div>{itemCards}</div>
       ) : (
         <p>No items in inventory.</p>

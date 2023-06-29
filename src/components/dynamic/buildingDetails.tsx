@@ -227,27 +227,22 @@ const BuildingDetails = () => {
 
   return (
     <div>
-      <h2>{buildingData.name}</h2>
       {buildingData.name && (
-        <img
-          src={require(`../../data/buildingIcons/${buildingData.name}.png`)}
-          alt={`${buildingData.name} icon`}
-        />
+        <div className="img-container">
+          <img
+            src={require(`../../data/buildingIcons/${buildingData.name}.png`)}
+            alt={`${buildingData.name} icon`}
+          />
+        </div>
       )}
+      <h2>{buildingData.name}</h2>
       <Card
-        primaryText={`Currently producing ${playerBuildingData.level} ${buildingData.itemProduced} every ${buildingData.productionRate} minute(s)`}
+        primaryText={`Currently producing ${playerBuildingData.level} ${buildingData.itemProduced} every ${buildingData.productionRate} minutes.`}
       />
       <Card
         primaryText={`Automatic Collection: ${
           playerBuildingData.autoCollect ? "Yes" : "No"
         }`}
-        rightElement={
-          !playerBuildingData?.autoCollect && (
-            <button disabled={collectedProduct === 0} onClick={handleCollect}>
-              Collect
-            </button>
-          )
-        }
       />
       <Card
         primaryText="Upgrade Wood Production"
@@ -267,6 +262,13 @@ const BuildingDetails = () => {
       />
       <Card
         primaryText={`Storage: ${collectedProduct}/${playerBuildingData.itemLimit}`}
+        rightElement={
+          !playerBuildingData?.autoCollect && (
+            <button disabled={collectedProduct === 0} onClick={handleCollect}>
+              Collect
+            </button>
+          )
+        }
       />
       {/* Render additional components or functionality for the building */}
     </div>

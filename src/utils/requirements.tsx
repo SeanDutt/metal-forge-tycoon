@@ -40,4 +40,3 @@ export function doesPlayerHaveResources(player: Player, requirements: Record<str
 
   return true;
 }
-

@@ -81,16 +81,16 @@ const LocationDetails = () => {
 
   return (
     <div>
-      <h1>{location}</h1>
       {locationData.name && (
-        <img
-          src={require(`../../data/exploreIcons/${locationData.name}.png`)}
-          alt="Explore location icon"
-        />
+        <div className="img-container">
+          <img
+            src={require(`../../data/exploreIcons/${locationData.name}.png`)}
+            alt="Explore location icon"
+          />
+        </div>
       )}
-
       <Card
-        primaryText="Explore"
+        primaryText={`You enter the ${locationData.name}.`}
         rightElement={<button onClick={handleExplore}>Explore</button>}
       />
       {lastObtainedItems.length > 0 && (

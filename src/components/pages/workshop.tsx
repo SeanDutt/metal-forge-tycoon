@@ -19,11 +19,12 @@ const Workshop: React.FC = () => {
   const playerData = useContext(PlayerContext);
 
   // Access the crafting skill level
-  const craftingSkillLevel = playerData.skillLevels["crafting"] || 0;
+  const craftingSkillLevel = 0;
 
   useEffect(() => {
     async function fetchRecipesData() {
       const fetchedRecipes = await getRecipesBySkill(playerData);
+      console.log(fetchedRecipes)
       setRecipes(fetchedRecipes);
     }
     fetchRecipesData();
@@ -83,15 +84,18 @@ const Workshop: React.FC = () => {
   return (
     <div>
       <h2>Workshop</h2>
-      <h3>{`Crafting skill: ${craftingSkillLevel}`}</h3>
+      {/* <h3>{`Crafting skill: ${craftingSkillLevel}`}</h3> */}
       {recipes.map((recipe, index) => (
         <Card
           key={index}
-          icon={
-            recipe.output
-              ? require(`../../data/itemIcons/${recipe.output.name}.png`)
-              : null
-          }
+          icon={(() => {
+            try {
+              return require(`../../data/itemIcons/${recipe.output.name}.png`);
+            } catch (error) {
+              console.error(error);
+              return require(`../../data/itemIcons/NoIcon.png`);
+            }
+          })()}
           primaryText={`${recipe?.output.name}`}
           secondaryText={
             recipe?.input &&

@@ -1,63 +1,86 @@
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  query,
+  where,
+  writeBatch,
+} from "firebase/firestore";
 import { db } from "../firebase.ts";
 
-export const addToInventory = async (playerId: string, obtainedItems: any[]) => {
-    // Retrieve the player's document from the Firestore database
-    const playerDocRef = doc(db, "players", playerId);
-    const playerDocSnapshot = await getDoc(playerDocRef);
+export const addToInventory = async (
+  playerId: string,
+  obtainedItems: any[]
+) => {
+  // Retrieve the player's document from the Firestore database
+  const playerDocRef = doc(db, "players", playerId);
+  const playerDocSnapshot = await getDoc(playerDocRef);
 
-    if (playerDocSnapshot.exists()) {
-        const playerData = playerDocSnapshot.data();
-        // Check if the player's document has an inventory field
-        let inventory = playerData.inventory || {};
+  if (playerDocSnapshot.exists()) {
+    const inventoryColRef = collection(playerDocRef, "inventory");
 
-        obtainedItems.forEach((item) => {
-            const itemName = item.itemName;
-            const quantity = item.quantity || 1;
+    obtainedItems.forEach(async (item) => {
+      const itemName = item.itemName;
+      const ownedCurrent = item.quantity || 1;
+      const ownedLifetime = item.quantity || 1;
 
-            if (inventory.hasOwnProperty(itemName)) {
-                // Item already exists in inventory, update quantity
-                inventory[itemName].ownedCurrent += quantity;
-                inventory[itemName].ownedLifetime += quantity;
-            } else {
-                // Item doesn't exist in inventory, add it
-                inventory[itemName] = {
-                ownedCurrent: quantity,
-                ownedLifetime: quantity,
-                };
-            }
+      const itemDocRef = doc(inventoryColRef, itemName);
+      const itemDocSnapshot = await getDoc(itemDocRef);
+
+      const batch = writeBatch(db);
+
+      if (itemDocSnapshot.exists()) {
+        // Item already exists in inventory, update quantity
+        const currentOwnedCurrent = itemDocSnapshot.data().ownedCurrent || 0;
+        const currentOwnedLifetime = itemDocSnapshot.data().ownedLifetime || 0;
+        batch.update(itemDocRef, {
+          ownedCurrent: currentOwnedCurrent + ownedCurrent,
+          ownedLifetime: currentOwnedLifetime + ownedLifetime,
         });
-
-        // Update the player's document with the modified inventory
-        await updateDoc(playerDocRef, {
-        inventory: inventory,
+      } else {
+        // Item doesn't exist in inventory, add it
+        batch.set(itemDocRef, {
+          itemName: itemName,
+          ownedCurrent: ownedCurrent,
+          ownedLifetime: ownedLifetime,
         });
-    }
+      }
+
+      await batch.commit();
+    });
+  }
 };
 
-export const removeFromInventory = async (playerId: string, removedItems: any[]) => {
-    // Retrieve the player's document from the Firestore database
-    const playerDocRef = doc(db, "players", playerId);
-    const playerDocSnapshot = await getDoc(playerDocRef);
+export const removeFromInventory = async (
+  playerId: string,
+  removedItems: any[]
+) => {
+  // Retrieve the player's document from the Firestore database
+  const playerDocRef = doc(db, "players", playerId);
+  const playerDocSnapshot = await getDoc(playerDocRef);
 
-    if (playerDocSnapshot.exists()) {
-        const playerData = playerDocSnapshot.data();
-        // Check if the player's document has an inventory field
-        let inventory = playerData.inventory || {};
+  if (playerDocSnapshot.exists()) {
+    const inventoryColRef = collection(playerDocRef, "inventory");
 
-        removedItems.forEach((item) => {
-            const itemName = item.itemName;
-            const quantity = item.quantity || 1;
+    removedItems.forEach(async (item) => {
+      const itemName = item.itemName;
+      const quantity = item.quantity || 1;
 
-            if (inventory.hasOwnProperty(itemName)) {
-                // Item already exists in inventory, update quantity
-                inventory[itemName].ownedCurrent -= quantity;
-            }
-        });
+      const querySnapshot = await getDocs(
+        query(
+          inventoryColRef,
+          where("itemName", "==", itemName),
+          limit(quantity)
+        )
+      );
+      const itemDocs = querySnapshot.docs;
 
-        // Update the player's document with the modified inventory
-        await updateDoc(playerDocRef, {
-        inventory: inventory,
-        });
-    }
+      itemDocs.forEach(async (itemDoc) => {
+        await deleteDoc(itemDoc.ref);
+      });
+    });
+  }
 };

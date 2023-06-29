@@ -106,7 +106,6 @@ export async function getRecipesBySkill(playerData: Player): Promise<Recipe[]> {
           return {
             input: recipeData.input,
             output: outputItem,
-            skillRequirements: recipeData.skillRequirements,
           } as Recipe;
         }
       }

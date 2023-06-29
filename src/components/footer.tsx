@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNavigate } from "react-router-dom";
+import './footer.css';
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -17,10 +17,14 @@ const Footer = () => {
       console.error('Error logging out:', error);
     }
   };
+
+  const handleHome = () => {
+    navigate("/")
+  }
   
   return (
     <div className="footer">
-      <Link to="/" style={{ color: 'inherit', textDecoration: 'inherit'}}>Home</Link>
+      <button onClick={handleHome} >Home</button>
       <button onClick={handleLogout}>Logout</button>
     </div>
   );

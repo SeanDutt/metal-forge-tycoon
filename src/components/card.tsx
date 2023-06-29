@@ -19,7 +19,8 @@ const Card: React.FC<CardProps> = ({
   const cardContent = (
     <>
       <div className="card-left">
-        {icon && <img src={icon} alt="Icon" className="card-icon" />}
+        {icon && 
+        <img src={icon} alt="Icon" className="card-icon" />}
       </div>
       <div className="card-body">
         <h3 className="card-primary-text">{primaryText}</h3>

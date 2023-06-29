@@ -118,6 +118,8 @@ const NPCRequestDetails = () => {
   const grantedItems: Record<string, number> =
     npcRequest.grantedItems as Record<string, number>;
 
+    console.log(player)
+
   return (
     <div>
       <Card

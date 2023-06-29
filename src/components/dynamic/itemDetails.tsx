@@ -51,11 +51,13 @@ const ItemDetails = () => {
       <h1>{itemId}</h1>
       <h2>Item Details</h2>
       {itemDetails?.name && (
-        <img
-          src={require(`../../data/itemIcons/${itemDetails.name}.png`)}
-          alt=""
-          style={{ width: "100vw" }}
-        />
+        <div className="img-container">
+          <img
+            src={require(`../../data/itemIcons/${itemDetails.name}.png`)}
+            alt=""
+            style={{ width: "100vw" }}
+          />
+        </div>
       )}
       <Card primaryText={`Currently owned: ${itemsOnHand}`} />
       <Card primaryText={`All-time owned: ${itemsLifetime}`} />

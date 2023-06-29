@@ -1,0 +1,32 @@
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 20px;
+    font-size: 14px;
+    color: #cecece;
+    margin-top: auto;
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 40px);
+  }
+  
+  .footer a {
+    text-decoration: none;
+    color: #888;
+  }
+  
+  .footer button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    color: #888;
+    outline: none;
+  }
+  
+  .footer button:hover {
+    text-decoration: underline;
+  }
+  

@@ -104,8 +104,7 @@ const App: React.FC = () => {
             path="/requests/:npcRequestId"
             element={<NPCRequestDetails />}
           />
-          {/* <Route path="/admin" element={<AdminPage />} />
-          <Route path="/register" element={<AuthComponent />} /> */}
+          {/* <Route path="/admin" element={<AdminPage />} /> */}
         </Routes>
         <Footer />
       </Router>
