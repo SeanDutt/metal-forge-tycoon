@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore';
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import { db } from '../firebase.ts';
 import { Player } from './player.tsx';
@@ -23,41 +23,44 @@ export const PlayerProvider: React.FC<PlayerProviderProps> = ({ children, player
   const [playerData, setPlayerData] = useState<Player>({ ...defaultPlayer, inventory: {} });
 
   useEffect(() => {
-    // Get the player document reference
-    const playerDocRef = doc(db, "players", playerId);
-  
-    // Attach the real-time listener to the player document
-    const unsubscribe = onSnapshot(playerDocRef, (snapshot) => {
-      const data = snapshot.data();
-      if (data) {
-        // Fetch the player's inventory subcollection
-        const inventoryRef = collection(playerDocRef, "inventory");
-        const inventoryData: Record<string, any> = {};
-  
-        // Retrieve the inventory documents in the subcollection
-        getDocs(inventoryRef)
-          .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              inventoryData[doc.id] = doc.data();
-            });
-            // Update the player data with the retrieved inventory
-            setPlayerData((prevPlayerData) => ({
-              ...prevPlayerData,
-              ...data,
-              inventory: inventoryData
-            }));
-          })
-          .catch((error) => {
-            console.error("Error fetching player inventory:", error);
+    const playerDocRef = doc(db, 'players', playerId);
+    const inventoryRef = collection(playerDocRef, 'inventory');
+    
+    const getPlayerData = async () => {
+      try {
+        const playerSnapshot = await getDoc(playerDocRef);
+        
+        if (playerSnapshot.exists()) {
+          const playerData = playerSnapshot.data();
+          const inventorySnapshot = await getDocs(inventoryRef);
+          
+          const inventoryData: Record<string, any> = {};
+          inventorySnapshot.forEach((doc) => {
+            inventoryData[doc.id] = doc.data();
           });
-      } else {
-        setPlayerData(defaultPlayer);
+          
+          setPlayerData((prevPlayerData) => ({
+            ...prevPlayerData,
+            ...playerData,
+            inventory: inventoryData
+          }));
+        } else {
+          setPlayerData(defaultPlayer);
+        }
+      } catch (error) {
+        console.error('Error fetching player data:', error);
       }
-    });
+    };
   
-    // Clean up the listener when the component unmounts or the user logs out
+    const unsubscribe = onSnapshot(playerDocRef, () => {
+      // Trigger the fetch of player data
+      getPlayerData();
+    });
+
     return () => unsubscribe();
   }, [playerId]);
+  
+  console.log(playerData);
 
   return (
     <PlayerContext.Provider value={playerData}>

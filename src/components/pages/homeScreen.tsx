@@ -7,11 +7,38 @@ export interface HomeScreenComponent {
   imageUrl?: string;
 }
 
-interface HomeScreenProps {
-  components: HomeScreenComponent[];
-}
+const components: HomeScreenComponent[] = [
+  {
+    name: "Inventory",
+    text: "All your stuff.",
+    imageUrl: "buildingIcons/inventory.png",
+  },
+  {
+    name: "Workshop",
+    text: "Craft things here!",
+    imageUrl: "buildingIcons/workshop.png",
+  },
+  {
+    name: "Explore",
+    text: "Go on a resource run!",
+    imageUrl: "exploreIcons/Forest.png",
+  },
+  {
+    name: "Requests",
+    text: "What do you want?",
+    imageUrl: "requestIcons/Woody.png",
+  },
+  {
+    name: "Buildings",
+    text: "Manage automatic resources.",
+    imageUrl: "buildingIcons/Tree Farm.png",
+  },
+  // { name: 'Admin', text: 'Create things' },
+  // { name: 'Register', text: '' },
+  // Add more components to the array
+];
 
-function HomeScreen({ components }: HomeScreenProps) {
+function HomeScreen() {
   return (
     <div>
       {components.map((component, index: number) => (

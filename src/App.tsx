@@ -43,37 +43,6 @@ const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  const components: HomeScreenComponent[] = [
-    {
-      name: "Inventory",
-      text: "All your stuff.",
-      imageUrl: "buildingIcons/inventory.png",
-    },
-    {
-      name: "Workshop",
-      text: "Craft things here!",
-      imageUrl: "buildingIcons/workshop.png",
-    },
-    {
-      name: "Explore",
-      text: "Go on a resource run!",
-      imageUrl: "exploreIcons/Forest.png",
-    },
-    {
-      name: "Requests",
-      text: "What do you want?",
-      imageUrl: "requestIcons/Woody.png",
-    },
-    {
-      name: "Buildings",
-      text: "Manage automatic resources.",
-      imageUrl: "buildingIcons/Tree Farm.png",
-    },
-    // { name: 'Admin', text: 'Create things' },
-    // { name: 'Register', text: '' },
-    // Add more components to the array
-  ];
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -93,8 +62,7 @@ const App: React.FC = () => {
     <PlayerProvider playerId={playerId}>
       <Router>
         <Routes>
-          {/* Redirect to login page if not authenticated */}
-          <Route path="/" element={<HomeScreen components={components} />} />
+          <Route path="/" element={<HomeScreen />} />
           <Route path="/workshop" element={<Workshop />} />
           <Route path="/inventory" element={<Inventory />} />
 
