@@ -4,9 +4,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import HomeScreen, {
-  HomeScreenComponent,
-} from "./components/pages/homeScreen.tsx";
+import HomeScreen from "./components/pages/homeScreen.tsx";
 import ItemDetails from "./components/dynamic/itemDetails.tsx";
 import "./components/card.css";
 import "./App.css";
