@@ -25,7 +25,6 @@ import AuthComponent from "./components/pages/registration.tsx";
 
 const App: React.FC = () => {
   const [playerId, setPlayerId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -35,15 +34,10 @@ const App: React.FC = () => {
       } else {
         setPlayerId(null);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (playerId === null) {
     // User not logged in
