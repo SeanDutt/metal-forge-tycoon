@@ -27,14 +27,17 @@ import AuthComponent from "./components/pages/registration.tsx";
 
 const App: React.FC = () => {
   const [playerId, setPlayerId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        console.log(user.uid);
         setPlayerId(user.uid);
       } else {
         setPlayerId(null);
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -70,6 +73,10 @@ const App: React.FC = () => {
     // { name: 'Register', text: '' },
     // Add more components to the array
   ];
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (playerId === null) {
     // User not logged in
