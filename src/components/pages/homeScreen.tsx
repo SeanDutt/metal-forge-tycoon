@@ -1,10 +1,10 @@
 import React from "react";
 import Card from "../card.tsx";
-import inventoryIcon from "../../data/buildingIcons/inventory.png";
-import workshopIcon from "../../data/buildingIcons/workshop.png";
-import exploreIcon from "../../data/exploreIcons/forest.png";
-import requestIcon from "../../data/requestIcons/woody.png";
-import buildingIcon from "../../data/buildingIcons/tree farm.png";
+import inventoryIcon from "../../data/homeIcons/inventory.png";
+import workshopIcon from "../../data/homeIcons/workshop.png";
+import exploreIcon from "../../data/homeIcons/forest.png";
+import requestIcon from "../../data/homeIcons/eamon.png";
+import buildingIcon from "../../data/homeIcons/treefarm.png";
 
 export interface HomeScreenComponent {
   name: string;

@@ -84,7 +84,7 @@ const LocationDetails = () => {
       {locationData.name && (
         <div className="img-container">
           <img
-            src={require(`../../data/exploreIcons/${locationData.name.toLowerCase()}.png`)}
+            src={require(`../../data/exploreIcons/${locationData.name}.png`)}
             alt="Explore location icon"
           />
         </div>

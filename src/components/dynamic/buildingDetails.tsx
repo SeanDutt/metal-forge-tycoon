@@ -230,7 +230,7 @@ const BuildingDetails = () => {
       {buildingData.name && (
         <div className="img-container">
           <img
-            src={require(`../../data/buildingIcons/${buildingData.name.toLowerCase()}.png`)}
+            src={require(`../../data/buildingIcons/${buildingData.name}.png`)}
             alt={`${buildingData.name} icon`}
           />
         </div>

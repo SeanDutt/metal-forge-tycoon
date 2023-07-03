@@ -126,7 +126,7 @@ const NPCRequestDetails = () => {
         primaryText={npcRequestId || ""}
         icon={(() => {
           try {
-            return require(`../../data/requestIcons/${npcRequest.from.toLowerCase()}.png`);
+            return require(`../../data/requestIcons/${npcRequest.from}.png`);
           } catch (error) {
             console.error(error);
             return require(`../../data/itemIcons/NoIcon.png`);
