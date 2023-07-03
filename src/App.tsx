@@ -53,7 +53,7 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           <Route path="/" element={<HomeScreen />} />
-          <Route path="/workshop" element={<Workshop />} />
+          {/* <Route path="/workshop" element={<Workshop />} />
           <Route path="/inventory" element={<Inventory />} />
 
           <Route path="/buildings" element={<ProductionBuildings />} />
@@ -64,7 +64,7 @@ const App: React.FC = () => {
           <Route path="/explore" element={<Explore />} />
           <Route path="/explore/:location" element={<LocationDetails />} />
 
-          <Route path="/requests" element={<NPCRequests />} />
+          <Route path="/requests" element={<NPCRequests />} /> */}
           {/* <Route
             path="/requests/:npcRequestId"
             element={<NPCRequestDetails />}
