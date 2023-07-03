@@ -1,7 +1,7 @@
 import React from "react";
 import Card from "../card.tsx";
 import inventoryIcon from "../../data/buildingIcons/inventory.png";
-import workshopIcon from "../../data/buildingIcons/workshop";
+import workshopIcon from "../../data/buildingIcons/workshop.png";
 // import exploreIcon from "../../data/exploreIcons/Forest";
 // import requestIcon from "../../data/requestIcons/Woody";
 // import buildingIcon from "../../data/buildingIcons/Tree Farm";
