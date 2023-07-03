@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomeScreen from "./components/pages/homeScreen.tsx";
 import ItemDetails from "./components/dynamic/itemDetails.tsx";
 import "./components/card.css";
@@ -52,7 +48,8 @@ const App: React.FC = () => {
   }
 
   return (
-
+    <>
+      <div>Hello!</div>
       <Router>
         <Routes>
           <Route path="/" element={<HomeScreen />} />
@@ -76,7 +73,7 @@ const App: React.FC = () => {
         </Routes>
         <Footer />
       </Router>
-
+    </>
   );
 };
 
