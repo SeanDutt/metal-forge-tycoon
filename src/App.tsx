@@ -52,7 +52,7 @@ const App: React.FC = () => {
       <div>Hello!</div>
       <Router>
         <Routes>
-          {/* <Route path="/" element={<HomeScreen />} /> */}
+          <Route path="/" element={<HomeScreen />} />
           {/* <Route path="/workshop" element={<Workshop />} />
           <Route path="/inventory" element={<Inventory />} />
 

@@ -1,5 +1,10 @@
 import React from "react";
 import Card from "../card.tsx";
+import inventoryIcon from "../../data/buildingIcons/inventory.png";
+import workshopIcon from "../../data/buildingIcons/workshop.png";
+import exploreIcon from "../../data/exploreIcons/Forest.png";
+import requestIcon from "../../data/requestIcons/Woody.png";
+import buildingIcon from "../../data/buildingIcons/Tree Farm.png";
 
 export interface HomeScreenComponent {
   name: string;
@@ -11,27 +16,27 @@ const components: HomeScreenComponent[] = [
   {
     name: "Inventory",
     text: "All your stuff.",
-    imageUrl: "buildingIcons/inventory.png",
+    imageUrl: inventoryIcon,
   },
   {
     name: "Workshop",
     text: "Craft things here!",
-    imageUrl: "buildingIcons/workshop.png",
+    imageUrl: workshopIcon,
   },
   {
     name: "Explore",
     text: "Go on a resource run!",
-    imageUrl: "exploreIcons/Forest.png",
+    imageUrl: exploreIcon,
   },
   {
     name: "Requests",
     text: "What do you want?",
-    imageUrl: "requestIcons/Woody.png",
+    imageUrl: requestIcon,
   },
   {
     name: "Buildings",
     text: "Manage automatic resources.",
-    imageUrl: "buildingIcons/Tree Farm.png",
+    imageUrl: buildingIcon,
   },
   // { name: 'Admin', text: 'Create things' },
   // { name: 'Register', text: '' },
@@ -44,11 +49,7 @@ function HomeScreen() {
       {components.map((component, index: number) => (
         <Card
           key={index}
-          icon={
-            component.imageUrl
-              ? require(`../../data/${component.imageUrl}`)
-              : null
-          }
+          icon={component.imageUrl}
           primaryText={component.name}
           secondaryText={[component.text] || ""}
           link={`/${component.name}`}
