@@ -1,4 +1,3 @@
-import { ItemWithQuantity } from "./items";
 import { Requirement } from "./recipe";
 
 export type NpcRequest = {
@@ -12,6 +11,6 @@ export type NpcRequest = {
 
     requestedItems: string[]; // The items the player needs to fulfill the request
     requestedQuantity: number[];
-    
+
     requirements: Requirement[];
 };
