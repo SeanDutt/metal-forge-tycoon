@@ -60,7 +60,7 @@ const ItemDetails = () => {
             <Card
               key={index}
               icon={require(`../../data/itemIcons/${
-                item.imageUrl || "noicon.png"
+                item.imageUrl || "noIcon.png"
               }`)}
               primaryText={item.item}
               rightElement={`${item.quantity}x`}
@@ -76,7 +76,7 @@ const ItemDetails = () => {
             <Card
               key={index}
               icon={require(`../../data/itemIcons/${
-                recipe.grantedItem.imageUrl || "noicon.png"
+                recipe.grantedItem.imageUrl || "noIcon.png"
               }`)}
               primaryText={recipe.grantedItem.item}
               link={`/item/${recipe.grantedItem.item}`}

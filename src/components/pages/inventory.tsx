@@ -23,7 +23,7 @@ const Inventory = () => {
                   icon={
                     item
                       ? require(`../../data/itemIcons/${item.imageUrl}`)
-                      : require(`../../data/itemIcons/noicon.png`)
+                      : require(`../../data/itemIcons/noIcon.png`)
                   }
                   primaryText={itemName}
                   rightElement={`${itemData.ownedCurrent}`}

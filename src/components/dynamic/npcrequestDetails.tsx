@@ -185,7 +185,7 @@ const NPCRequestDetails = () => {
             return require(`../../data/requestIcons/${npcRequest.imageUrl}`);
           } catch (error) {
             console.error(error);
-            return require(`../../data/itemIcons/noicon.png`);
+            return require(`../../data/itemIcons/noIcon.png`);
           }
         })()}
       />
@@ -216,7 +216,7 @@ const NPCRequestDetails = () => {
               <Card
                 key={index}
                 icon={require(`../../data/itemIcons/${
-                  item.imageUrl || "noicon.png"
+                  item.imageUrl || "noIcon.png"
                 }`)}
                 primaryText={item.item}
                 rightElement={`${item.quantity}x`}
@@ -235,7 +235,7 @@ const NPCRequestDetails = () => {
               <Card
                 key={index}
                 icon={require(`../../data/itemIcons/${
-                  item.imageUrl || "noicon.png"
+                  item.imageUrl || "noIcon.png"
                 }`)}
                 primaryText={item.item}
                 rightElement={`${item.quantity}x`}
