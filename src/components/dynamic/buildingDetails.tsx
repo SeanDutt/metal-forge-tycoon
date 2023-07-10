@@ -28,6 +28,7 @@ interface PlayerBuildingData {
 
 interface BuildingData {
   id: string;
+  imageUrl: string;
   name: string;
   baseUpgradeCost: Record<string, number>;
   upgradeCostScaling: boolean;
@@ -230,7 +231,7 @@ const BuildingDetails = () => {
       {buildingData.name && (
         <div className="img-container">
           <img
-            src={require(`../../data/buildingIcons/${buildingData.name}.png`)}
+            src={require(`../../data/buildingIcons/${buildingData.imageUrl}`)}
             alt={`${buildingData.name} icon`}
           />
         </div>

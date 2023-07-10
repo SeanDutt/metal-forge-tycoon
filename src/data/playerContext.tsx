@@ -55,9 +55,13 @@ export const PlayerProvider: React.FC<PlayerProviderProps> = ({ children, player
       }
     };
 
-    const unsubscribe = onSnapshot(playerDocRef, () => {
-      // Trigger the fetch of player data
-      getPlayerData();
+    const unsubscribe = onSnapshot(playerDocRef, (snapshot) => {
+      // Trigger the fetch of player data only if the document exists
+      if (snapshot.exists()) {
+        getPlayerData();
+      } else {
+        setPlayerData(defaultPlayer);
+      }
     });
 
     return () => unsubscribe();

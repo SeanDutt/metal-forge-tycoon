@@ -1,8 +1,29 @@
-import { Item } from "./item";
+import { ItemWithQuantity } from "./items";
 
 export interface Recipe {
-    input: { [itemName: string]: number };
-    imageUrl?: string;
-    output: Item;
-    skillRequirements: { [skillName: string]: number };
+    requiredItems: ItemWithQuantity[];
+    grantedItem: ItemWithQuantity;
+    requirements: Requirement[];
+}
+  
+export type Requirement =
+    | SkillRequirement
+    | ItemRequirement
+    | RequestCompletionRequirement;
+
+export interface SkillRequirement {
+    type: 'skill';
+    skill: string;
+    level: number;
+}
+
+export interface ItemRequirement {
+    type: 'item';
+    itemId: string;
+    quantity: number;
+}
+
+export interface RequestCompletionRequirement {
+    type: 'requestCompletion';
+    requestId: string;
 }

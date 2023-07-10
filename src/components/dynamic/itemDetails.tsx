@@ -8,88 +8,66 @@ import {
 } from "../../firebase.ts";
 import Card from "../card.tsx";
 import { Recipe } from "../../data/recipe.ts";
-import { Item } from "../../data/item.ts";
+import { Item } from "../../data/items.ts";
 
 const ItemDetails = () => {
-  const { itemId } = useParams<{ itemId: string }>(); // Retrieve the itemId from the URL parameter
+  const { itemId } = useParams<{ itemId: string }>();
 
-  const playerData = useContext(PlayerContext); // Access the player data from the context
+  const playerData = useContext(PlayerContext);
 
   const [itemDetails, setItemDetails] = useState<Item>();
-  const [recipeToCreate, setRecipeToCreate] = useState<Recipe>();
+  const [recipeToCreate, setRecipeToCreate] = useState<Recipe | null>(null);
   const [usedInRecipes, setUsedInRecipes] = useState<Recipe[]>([]);
 
   useEffect(() => {
     const loadItemDetails = async () => {
-      const itemFound = await getItemById(itemId ?? "");
-      if (itemFound) {
-        setItemDetails(itemFound);
+      if (itemId) {
+        const hasItemDetails = await getItemById(itemId);
+        hasItemDetails && setItemDetails(hasItemDetails);
+
+        const hasRecipeForItem = await getRecipeForItemId(itemId);
+        hasRecipeForItem && setRecipeToCreate(hasRecipeForItem);
+
+        const hasRecipesUsingItem = await getRecipesByItemId(itemId);
+        hasRecipesUsingItem && setUsedInRecipes(hasRecipesUsingItem);
       }
-
-      const recipeToCreateItem = await getRecipeForItemId(itemId ?? "");
-      recipeToCreateItem && setRecipeToCreate(recipeToCreateItem);
-
-      const recipesUsingItem = await getRecipesByItemId(itemId ?? "");
-      const updatedRecipes = recipesUsingItem.map((recipe) => ({
-        ...recipe,
-        output: {
-          name: recipe.output,
-        },
-      }));
-      setUsedInRecipes(updatedRecipes);
     };
-
     loadItemDetails();
-  }, [itemId]); // Add itemId as a dependency to the useEffect dependency array
+  }, [itemId]);
 
-  // Retrieve the item quantity from the player's inventory data
   const itemsOnHand = playerData?.inventory[itemId ?? ""]?.ownedCurrent || 0;
   const itemsLifetime = playerData?.inventory[itemId ?? ""]?.ownedLifetime || 0;
 
   return (
-    <div>
+    <div key={itemId}>
       <h1>{itemId}</h1>
       <h2>Item Details</h2>
-      {itemDetails?.name && (
+      {itemDetails && (
         <div className="img-container">
           <img
-            src={require(`../../data/itemIcons/${itemDetails.name}.png`)}
-            alt=""
-            style={{ width: "100vw" }}
+            src={require(`../../data/itemIcons/${itemDetails.imageUrl}`)}
+            alt={`${itemDetails.name} icon`}
+            style={{ width: "75vw" }}
           />
         </div>
       )}
       <Card primaryText={`Currently owned: ${itemsOnHand}`} />
       <Card primaryText={`All-time owned: ${itemsLifetime}`} />
-      {recipeToCreate?.skillRequirements !== undefined && (
-        <>
-          <p>Skill requirements:</p>
-          {Object.keys(recipeToCreate.skillRequirements).length > 0 && (
-            <>
-              {Object.entries(recipeToCreate.skillRequirements).map(
-                ([skillName, level]) => (
-                  <Card
-                    key={`${skillName}`}
-                    primaryText={`Requires ${skillName} level ${level}`}
-                  />
-                )
-              )}
-            </>
-          )}
-        </>
-      )}
       {recipeToCreate && (
-        <p>
-          Crafting recipe:
-          {Object.entries(recipeToCreate.input).map(([itemName, quantity]) => (
+        <>
+          <p>Crafting recipe:</p>
+          {recipeToCreate.requiredItems.map((item, index) => (
             <Card
-              key={itemName}
-              primaryText={itemName}
-              rightElement={`${quantity}x`}
-              link={`/item/${itemName}`}
+              key={index}
+              icon={require(`../../data/itemIcons/${
+                item.imageUrl || "noicon.png"
+              }`)}
+              primaryText={item.item}
+              rightElement={`${item.quantity}x`}
+              link={`/item/${item.item}`}
             />
           ))}
-        </p>
+        </>
       )}
       {usedInRecipes.length > 0 && (
         <>
@@ -97,10 +75,13 @@ const ItemDetails = () => {
           {usedInRecipes.map((recipe, index) => (
             <Card
               key={index}
-              primaryText={recipe.output.name}
-              link={`/item/${recipe.output.name}`}
-              secondaryText={Object.entries(recipe.input).map(
-                ([itemName, quantity]) => `${quantity}x ${itemName}`
+              icon={require(`../../data/itemIcons/${
+                recipe.grantedItem.imageUrl || "noicon.png"
+              }`)}
+              primaryText={recipe.grantedItem.item}
+              link={`/item/${recipe.grantedItem.item}`}
+              secondaryText={recipe.requiredItems.map(
+                (itemObj) => `${itemObj.quantity}x ${itemObj.item}`
               )}
             />
           ))}

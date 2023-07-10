@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PlayerContext } from "../../data/playerContext.tsx";
 import Card from "../card.tsx";
-import { db, getItemById } from "../../firebase.ts";
-import { getDocs, collection } from "firebase/firestore";
+import { getItemById } from "../../firebase.ts";
 
 const Inventory = () => {
   const player = useContext(PlayerContext);
@@ -12,14 +11,10 @@ const Inventory = () => {
     const fetchInventoryItems = async () => {
       if (player) {
         try {
-          const inventoryItemsSnapshot = await getDocs(
-            collection(db, "players", player.id, "inventory")
-          );
+          const inventoryItems = player.inventory;
 
-          const itemCardPromises = inventoryItemsSnapshot.docs.map(
-            async (doc) => {
-              const itemData = doc.data();
-              const itemName = doc.id;
+          const itemCardPromises = Object.entries(inventoryItems).map(
+            async ([itemName, itemData]) => {
               const item = await getItemById(itemName);
 
               return (
@@ -27,8 +22,8 @@ const Inventory = () => {
                   key={itemName}
                   icon={
                     item
-                      ? require(`../../data/itemIcons/${itemName}.png`)
-                      : require(`../../data/itemIcons/NoIcon.png`)
+                      ? require(`../../data/itemIcons/${item.imageUrl}`)
+                      : require(`../../data/itemIcons/noicon.png`)
                   }
                   primaryText={itemName}
                   rightElement={`${itemData.ownedCurrent}`}

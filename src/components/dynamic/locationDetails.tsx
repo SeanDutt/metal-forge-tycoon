@@ -3,13 +3,17 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PlayerContext } from "../../data/playerContext.tsx";
 import { db } from "../../firebase.ts";
-import { addToInventory } from "../../utils/inventoryUtils.tsx";
+import {
+  addToInventory,
+  fetchItemDocuments,
+} from "../../utils/inventoryUtils.tsx";
 import Card from "../card.tsx";
 import { ExploreLocation } from "../pages/explore.tsx";
 
 interface LootPoolItem {
   itemName: string;
   probability: number;
+  imageUrl: string;
 }
 
 const LocationDetails = () => {
@@ -44,14 +48,18 @@ const LocationDetails = () => {
     const fetchLootPoolItems = async () => {
       if (locationData) {
         const lootPoolItems = locationData.lootPool || {};
-        const lootPool = await Promise.all(
-          Object.entries(lootPoolItems).map(async ([itemName, probability]) => {
-            return {
-              itemName,
-              probability,
-            };
-          })
-        );
+        const itemNames = Object.keys(lootPoolItems);
+
+        // Fetch the item documents based on their names
+        const itemDocuments = await fetchItemDocuments(itemNames);
+
+        // Map the fetched item documents to the loot pool items
+        const lootPool = itemDocuments.map((itemDoc) => {
+          const itemName = itemDoc.name;
+          const imageUrl = itemDoc.imageUrl;
+          const probability = lootPoolItems[itemName];
+          return { itemName, probability, imageUrl };
+        });
 
         setLootPool(lootPool);
       }
@@ -66,11 +74,14 @@ const LocationDetails = () => {
       (item) => Math.random() < item.probability
     );
 
+    console.log("Obtained Items:", obtainedItems);
+    console.log("Player ID:", player?.id);
+
     if (obtainedItems.length > 0 && player?.id) {
       await addToInventory(player.id, obtainedItems);
       setLastObtainedItems(obtainedItems.map((item) => item.itemName));
     } else {
-      setLastObtainedItems(["nothing!"]);
+      setLastObtainedItems(["Nothing!"]);
     }
   };
 
@@ -79,12 +90,14 @@ const LocationDetails = () => {
     return <p>Loading...</p>;
   }
 
+  console.log(lastObtainedItems);
+
   return (
     <div>
       {locationData.name && (
         <div className="img-container">
           <img
-            src={require(`../../data/exploreIcons/${locationData.name}.png`)}
+            src={require(`../../data/exploreIcons/${locationData.imageUrl}`)}
             alt="Explore location icon"
           />
         </div>
@@ -103,7 +116,9 @@ const LocationDetails = () => {
           <Card
             key={item.itemName}
             icon={
-              item.itemName ? require(`../../data/itemIcons/${item.itemName}.png`) : null
+              item.itemName
+                ? require(`../../data/itemIcons/${item.imageUrl}`)
+                : null
             }
             primaryText={item.itemName}
             link={`/item/${item.itemName}`}

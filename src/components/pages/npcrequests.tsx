@@ -85,7 +85,7 @@ const NpcRequests = () => {
           key={request.name}
           icon={
             request.from
-              ? require(`../../data/requestIcons/${request.from}.png`)
+              ? require(`../../data/requestIcons/${request.imageUrl}`)
               : null
           }
           primaryText={request.name}

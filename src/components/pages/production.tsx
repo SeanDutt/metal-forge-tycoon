@@ -36,7 +36,7 @@ const ProductionBuildings = () => {
       {productionBuildings.map((building) => (
         <Card
           key={building.name}
-          icon={require(`../../data/buildingIcons/${building.name}.png`)}
+          icon={require(`../../data/buildingIcons/${building.imageUrl}`)}
           primaryText={building.name}
           link={`/Buildings/${building.name}`}
         />

@@ -32,9 +32,9 @@ const createRecipe = async (
     }
     // Create a new recipe document with the provided input and skill requirements
     await setDoc(doc(db,"recipes",outputItem), {
-      input: inputItems,
-      skillRequirements: skillRequirements,
-      output: outputItem
+      requiredItems: inputItems,
+      requirements: skillRequirements,
+      grantedItem: outputItem
     });
   } catch (error) {
     console.error("Error creating recipe:", error);

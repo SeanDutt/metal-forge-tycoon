@@ -10,6 +10,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase.ts";
+import { Item } from "../data/items.ts";
 
 export const addToInventory = async (
   playerId: string,
@@ -83,4 +84,22 @@ export const removeFromInventory = async (
       });
     });
   }
+};
+
+export const fetchItemDocuments = async (itemNames: string[]): Promise<Item[]> => {
+  const itemDocs: Item[] = [];
+  const itemsCollectionRef = collection(db, 'items');
+
+  // Create a query to fetch the item documents based on their names
+  const itemQuery = query(itemsCollectionRef, where('__name__', 'in', itemNames));
+
+  // Fetch the item documents
+  const querySnapshot = await getDocs(itemQuery);
+
+  // Iterate through the query snapshot and push each item document to the array
+  querySnapshot.forEach((doc) => {
+    itemDocs.push(doc.data() as Item);
+  });
+
+  return itemDocs;
 };

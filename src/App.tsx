@@ -48,7 +48,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <>
+    <PlayerProvider playerId={playerId}>
       <Router>
         <Routes>
           <Route path="/" element={<HomeScreen />} />
@@ -72,7 +72,7 @@ const App: React.FC = () => {
         </Routes>
         <Footer />
       </Router>
-    </>
+    </PlayerProvider>
   );
 };
 

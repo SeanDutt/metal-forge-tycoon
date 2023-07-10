@@ -1,16 +1,17 @@
+import { ItemWithQuantity } from "./items";
+import { Requirement } from "./recipe";
+
 export type NpcRequest = {
+    from: string; // The NPC or entity providing the request
     name: string; // The title displayed
     description: string; // The flavor text
-    from: string; // The NPC or entity providing the request
-    grantedItems: Object; // The items the player will receive as a reward for completing the request
-    requestedItems: Object; // The items the player needs to fulfill the request
-    requirements: {
-      skills: {
-        [skillName: string]: number; // Skill requirements and their corresponding levels
-      };
-      quests: string[]; // Quests that need to be completed as requirements
-      items: {
-        [itemName: string]: number; // Item requirements and their quantities
-      };
-    };
-  };
+    imageUrl: string; // The imageUrl of the NPC or entity
+
+    grantedItems: string[]; // The items the player will receive as a reward for completing the request
+    grantedQuantity: number[];
+
+    requestedItems: string[]; // The items the player needs to fulfill the request
+    requestedQuantity: number[];
+    
+    requirements: Requirement[];
+};

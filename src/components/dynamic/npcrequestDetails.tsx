@@ -8,7 +8,7 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 import React from "react";
-import { db } from "../../firebase.ts";
+import { db, getItemById } from "../../firebase.ts";
 import Card from "../card.tsx";
 import { NpcRequest } from "../../data/npcRequest.ts";
 import { Player } from "../../data/player.ts";
@@ -18,6 +18,7 @@ import {
   addToInventory,
   removeFromInventory,
 } from "../../utils/inventoryUtils.tsx";
+import { Item, ItemWithQuantity } from "../../data/items.ts";
 
 async function completeRequest(
   player: Player,
@@ -61,6 +62,8 @@ const NPCRequestDetails = () => {
   const { npcRequestId } = useParams();
   const [npcRequest, setNpcRequest] = useState<NpcRequest>();
   const [requestChainId, setRequestChainId] = useState<string>("");
+  const [requestedItems, setRequestedItems] = useState<ItemWithQuantity[]>([]);
+  const [grantedItems, setGrantedItems] = useState<ItemWithQuantity[]>([]);
 
   useEffect(() => {
     const fetchNpcRequest = async () => {
@@ -90,35 +93,88 @@ const NPCRequestDetails = () => {
     fetchNpcRequest();
   }, [npcRequestId]);
 
-  const renderItems = (items: Record<string, number>) => {
-    return Object.entries(items).map(([item, quantity]) => (
-      <Card
-        key={item}
-        icon={(() => {
-          try {
-            return require(`../../data/itemIcons/${item}.png`);
-          } catch (error) {
-            console.error(error);
-            return require(`../../data/itemIcons/NoIcon.png`);
-          }
-        })()}
-        primaryText={item}
-        rightElement={<p>{quantity}x</p>}
-        link={`/item/${item}`}
-      />
-    ));
-  };
+  useEffect(() => {
+    const fetchRequest = async () => {
+      if (
+        npcRequest &&
+        npcRequest.requestedItems &&
+        npcRequest.requestedQuantity
+      ) {
+        const fetchItems = async () => {
+          const requestedItemsWithDetails = await Promise.all(
+            npcRequest.requestedItems.map(async (itemName, index) => {
+              const item = await getItemById(itemName);
+              if (item) {
+                return {
+                  item: item.name,
+                  imageUrl: item.imageUrl || "",
+                  itemDoc: item,
+                  quantity: npcRequest.requestedQuantity[index],
+                };
+              }
+              return null;
+            })
+          );
+
+          const filteredRequestedItems = requestedItemsWithDetails.filter(
+            (
+              item
+            ): item is {
+              item: string;
+              imageUrl: string;
+              itemDoc: Item;
+              quantity: number;
+            } => item !== null
+          );
+
+          setRequestedItems(filteredRequestedItems as ItemWithQuantity[]);
+        };
+
+        fetchItems();
+      }
+
+      if (npcRequest && npcRequest.grantedItems && npcRequest.grantedQuantity) {
+        const fetchItems = async () => {
+          const grantedItemsWithDetails = await Promise.all(
+            npcRequest.grantedItems.map(async (itemName, index) => {
+              const item = await getItemById(itemName);
+              if (item) {
+                return {
+                  item: item.name,
+                  imageUrl: item.imageUrl || "",
+                  itemDoc: item,
+                  quantity: npcRequest.grantedQuantity[index],
+                };
+              }
+              return null;
+            })
+          );
+
+          const filteredGrantedItems = grantedItemsWithDetails.filter(
+            (
+              item
+            ): item is {
+              item: string;
+              imageUrl: string;
+              itemDoc: Item;
+              quantity: number;
+            } => item !== null
+          );
+
+          setGrantedItems(filteredGrantedItems as ItemWithQuantity[]);
+        };
+
+        fetchItems();
+      }
+    };
+    fetchRequest();
+  }, [npcRequest]);
 
   if (!npcRequest) {
     return <p>Loading...</p>;
   }
 
-  const requestedItems: Record<string, number> =
-    npcRequest.requestedItems as Record<string, number>;
-  const grantedItems: Record<string, number> =
-    npcRequest.grantedItems as Record<string, number>;
-
-    console.log(player)
+  console.log(requestedItems, grantedItems, npcRequest);
 
   return (
     <div>
@@ -126,10 +182,10 @@ const NPCRequestDetails = () => {
         primaryText={npcRequestId || ""}
         icon={(() => {
           try {
-            return require(`../../data/requestIcons/${npcRequest.from}.png`);
+            return require(`../../data/requestIcons/${npcRequest.imageUrl}`);
           } catch (error) {
             console.error(error);
-            return require(`../../data/itemIcons/NoIcon.png`);
+            return require(`../../data/itemIcons/noicon.png`);
           }
         })()}
       />
@@ -152,17 +208,41 @@ const NPCRequestDetails = () => {
         </p>
       )}
 
-      {Object.values(npcRequest.requestedItems).length > 0 && (
+      {requestedItems.length > 0 && (
         <>
-          <span>{npcRequest.from} requests that you bring:</span>
-          {renderItems(requestedItems)}
+          <p>{npcRequest.from} requests that you bring:</p>
+          {requestedItems.map((item, index) => {
+            return (
+              <Card
+                key={index}
+                icon={require(`../../data/itemIcons/${
+                  item.imageUrl || "noicon.png"
+                }`)}
+                primaryText={item.item}
+                rightElement={`${item.quantity}x`}
+                link={`/item/${item.item}`}
+              />
+            );
+          })}
         </>
       )}
 
-      {Object.values(npcRequest.grantedItems).length > 0 && (
+      {grantedItems.length > 0 && (
         <>
-          <span>You will be rewarded with:</span>
-          {renderItems(grantedItems)}
+          <p>You will be rewarded with:</p>
+          {grantedItems.map((item, index) => {
+            return (
+              <Card
+                key={index}
+                icon={require(`../../data/itemIcons/${
+                  item.imageUrl || "noicon.png"
+                }`)}
+                primaryText={item.item}
+                rightElement={`${item.quantity}x`}
+                link={`/item/${item.item}`}
+              />
+            );
+          })}
         </>
       )}
     </div>

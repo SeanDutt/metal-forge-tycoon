@@ -5,6 +5,7 @@ import React from "react";
 import { db } from "../../firebase.ts";
 
 export interface ExploreLocation {
+  imageUrl: string;
   name: string;
   description: string;
   lootPool: Record<string, number>;
@@ -36,7 +37,7 @@ const Explore = () => {
           key={location.name}
           icon={
             location.name
-              ? require(`../../data/exploreIcons/${location.name}.png`)
+              ? require(`../../data/exploreIcons/${location.imageUrl}`)
               : undefined
           }
           primaryText={location.name}
