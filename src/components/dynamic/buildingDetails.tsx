@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PlayerContext } from "../../data/playerContext";
-import {
-  addToInventory,
-  removeFromInventory,
-} from "../../utils/inventoryUtils";
+// import {
+//   addToInventory,
+//   removeFromInventory,
+// } from "../../utils/inventoryUtils";
 import Card from "../card";
 import {
   Timestamp,
@@ -12,10 +12,9 @@ import {
   doc,
   getDoc,
   setDoc,
-  updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase";
-import { doesPlayerMeetRequirements } from "../../utils/requirements";
+// import { doesPlayerMeetRequirements } from "../../utils/requirements";
 
 interface PlayerBuildingData {
   autoCollect: boolean;
