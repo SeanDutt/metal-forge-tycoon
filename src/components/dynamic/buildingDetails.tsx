@@ -151,76 +151,76 @@ const BuildingDetails = () => {
   // Get the upgrade cost
   const upgradeCost = calculateUpgradeCost();
 
-  const handleUpgrade = async () => {
-    const upgradeCost = calculateUpgradeCost();
-    const playerBuildingRef = doc(
-      collection(db, "players", playerData.id, "buildingData"),
-      buildingId
-    );
+  // const handleUpgrade = async () => {
+  //   const upgradeCost = calculateUpgradeCost();
+  //   const playerBuildingRef = doc(
+  //     collection(db, "players", playerData.id, "buildingData"),
+  //     buildingId
+  //   );
 
-    // Check if the player has enough resources to perform the upgrade
-    const canUpgrade = doesPlayerMeetRequirements(playerData, upgradeCost);
+  //   // Check if the player has enough resources to perform the upgrade
+  //   const canUpgrade = doesPlayerMeetRequirements(playerData, upgradeCost);
 
-    if (canUpgrade && playerBuildingData) {
-      try {
-        // Remove the required items from the player's inventory
-        const removedItems = Object.entries(upgradeCost).map(
-          ([item, cost]) => ({
-            itemName: item,
-            quantity: cost,
-          })
-        );
+  //   if (canUpgrade && playerBuildingData) {
+  //     try {
+  //       // Remove the required items from the player's inventory
+  //       const removedItems = Object.entries(upgradeCost).map(
+  //         ([item, cost]) => ({
+  //           itemName: item,
+  //           quantity: cost,
+  //         })
+  //       );
 
-        await removeFromInventory(playerData.id, removedItems);
+  //       await removeFromInventory(playerData.id, removedItems);
 
-        // Update the player's building level
-        const updatedLevel = playerBuildingData.level + 1;
-        await updateDoc(playerBuildingRef, { level: updatedLevel });
+  //       // Update the player's building level
+  //       const updatedLevel = playerBuildingData.level + 1;
+  //       await updateDoc(playerBuildingRef, { level: updatedLevel });
 
-        // Show success message or perform any other actions
-        calculateUpgradeCost();
-      } catch (error) {
-        console.error("Upgrade failed:", error);
-      }
-    } else {
-    }
-  };
+  //       // Show success message or perform any other actions
+  //       calculateUpgradeCost();
+  //     } catch (error) {
+  //       console.error("Upgrade failed:", error);
+  //     }
+  //   } else {
+  //   }
+  // };
 
-  const handleCollect = async () => {
-    if (buildingId && buildingData && playerBuildingData) {
-      try {
-        const currentTime = Timestamp.now();
+  // const handleCollect = async () => {
+  //   if (buildingId && buildingData && playerBuildingData) {
+  //     try {
+  //       const currentTime = Timestamp.now();
 
-        // Update the last retrieved time to the current time
-        const playerBuildingRef = doc(
-          db,
-          "players",
-          playerData.id,
-          "buildingData",
-          buildingId
-        );
-        await updateDoc(playerBuildingRef, {
-          produced: 0,
-          lifetimeProduced:
-            playerBuildingData?.lifetimeProduced + collectedProduct,
-          lastRetrieved: currentTime,
-        });
+  //       // Update the last retrieved time to the current time
+  //       const playerBuildingRef = doc(
+  //         db,
+  //         "players",
+  //         playerData.id,
+  //         "buildingData",
+  //         buildingId
+  //       );
+  //       await updateDoc(playerBuildingRef, {
+  //         produced: 0,
+  //         lifetimeProduced:
+  //           playerBuildingData?.lifetimeProduced + collectedProduct,
+  //         lastRetrieved: currentTime,
+  //       });
 
-        // Create the inventory object with the collected product
-        const inventoryItem = {
-          itemName: buildingData.itemProduced,
-          quantity: collectedProduct,
-        };
+  //       // Create the inventory object with the collected product
+  //       const inventoryItem = {
+  //         itemName: buildingData.itemProduced,
+  //         quantity: collectedProduct,
+  //       };
 
-        addToInventory(playerData.id, [inventoryItem]);
+  //       addToInventory(playerData.id, [inventoryItem]);
 
-        // Reset the collected product state
-        setCollectedProduct(0);
-      } catch (error) {
-        console.error("Error collecting product:", error);
-      }
-    }
-  };
+  //       // Reset the collected product state
+  //       setCollectedProduct(0);
+  //     } catch (error) {
+  //       console.error("Error collecting product:", error);
+  //     }
+  //   }
+  // };
 
   if (!buildingData || !playerBuildingData) {
     return <div>Loading...</div>;
@@ -254,8 +254,8 @@ const BuildingDetails = () => {
         ]}
         rightElement={
           <button
-            disabled={!doesPlayerMeetRequirements(playerData, upgradeCost)}
-            onClick={handleUpgrade}
+            disabled={true}
+            //onClick={handleUpgrade}
           >
             Upgrade
           </button>
@@ -265,7 +265,7 @@ const BuildingDetails = () => {
         primaryText={`Storage: ${collectedProduct}/${playerBuildingData.itemLimit}`}
         rightElement={
           !playerBuildingData?.autoCollect && (
-            <button disabled={collectedProduct === 0} onClick={handleCollect}>
+            <button disabled={true}>
               Collect
             </button>
           )

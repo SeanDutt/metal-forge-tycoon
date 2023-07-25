@@ -19,6 +19,7 @@ import BuildingDetails from "./components/dynamic/buildingDetails.tsx";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase.ts";
 import AuthComponent from "./components/pages/registration.tsx";
+import { AdminPage } from "./components/pages/adminPage.tsx";
 
 const App: React.FC = () => {
   const [playerId, setPlayerId] = useState<string | null>(null);
@@ -68,7 +69,7 @@ const App: React.FC = () => {
             path="/requests/:npcRequestId"
             element={<NPCRequestDetails />}
           />
-          {/* <Route path="/admin" element={<AdminPage />} /> */}
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
         <Footer />
       </Router>

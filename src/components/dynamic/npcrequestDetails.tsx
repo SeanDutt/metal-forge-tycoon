@@ -24,16 +24,16 @@ async function completeRequest(
   player: Player,
   npcRequestChainName: string,
   npcRequestName: string,
-  requestedItems: object,
-  grantedItems: object
+  requestedItems: ItemWithQuantity[],
+  grantedItems: ItemWithQuantity[]
 ): Promise<void> {
   const completionDate = new Date().toISOString();
 
   // Remove the requested items from the player's inventory
-  await removeFromInventory(player.id, [requestedItems]);
+  await removeFromInventory(player.id, requestedItems);
 
   // Add the granted items to the player's inventory
-  await addToInventory(player.id, [grantedItems]);
+  await addToInventory(player.id, grantedItems);
 
   // Get the document reference for the completedRequests chain
   const completedRequestsDocRef = doc(
@@ -190,7 +190,7 @@ const NPCRequestDetails = () => {
         })()}
       />
       <p dangerouslySetInnerHTML={{ __html: npcRequest.description }}></p>
-      {doesPlayerHaveResources(player, npcRequest.requestedItems) && (
+      {doesPlayerHaveResources(player, requestedItems) && (
         <p>
           <button
             onClick={() =>
@@ -198,8 +198,8 @@ const NPCRequestDetails = () => {
                 player,
                 requestChainId,
                 npcRequest.name,
-                npcRequest.requestedItems,
-                npcRequest.grantedItems
+                requestedItems,
+                grantedItems
               )
             }
           >

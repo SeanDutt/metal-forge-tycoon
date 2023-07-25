@@ -3,6 +3,7 @@ import { addDoc, collection, doc, getDoc, setDoc, updateDoc } from "firebase/fir
 import React from "react";
 import { db } from "../../firebase.ts";
 import "./adminPage.css";
+import { ItemWithQuantity } from "../../data/items.ts";
 
 
 const createRecipe = async (
@@ -105,34 +106,35 @@ type NpcRequest = {
   name: string; // The title displayed
   description: string; // The flavor text
   from: string; // The NPC or entity providing the request
-  grantedItems: Object; // The items the player will receive as a reward for completing the request
-  requestedItems: Object; // The items the player needs to fulfill the request
+  imageUrl: string; // The image to display as the icon
+  grantedItems: ItemWithQuantity[]; // The items the player will receive as a reward for completing the request
+
+  requestedItems: string[]; // The items the player needs to fulfill the request
+  requestedQuantity: number[] // The amount of items requested. 
+  
   requirements: {
     skills: {
       [skillName: string]: number; // Skill requirements and their corresponding levels
     };
     quests: string[]; // Quests that need to be completed as requirements
-    items: {
-      [itemName: string]: number; // Item requirements and their quantities
-    };
+    items: ItemWithQuantity[];
   };
 };
 
-const questChainId = "Woody Wants Wood"; // This represents the document ID of the request chain
+const currentChains = ["Jeremy's Awakening", "Woody Wants Wood"]
+
 const quest: NpcRequest = {
-  name: "Woody's Wooden Wonder",
-  description: 
-  "In the depths of the forest, Woody awaits, silently continuing his pursuit of wood. Having assisted him in expanding his timber trove, you have proven yourself as a trusted ally. Now, Woody seeks to put the collected wood to good use. Can you aid him in his newfound ambition of crafting wooden wonders?<br><br>Listen up, partner. Woody here. You've been a reliable help in gatherin' all that wood. It's time to put it to use. See, I got this itch to create somethin' out of these logs and planks. Got a few ideas swirlin' around in my head, and I reckon you might just have the skills to make 'em a reality.<br><br>But I ain't askin' you to do all the work. No, we'll be partners in this endeavor. I'll share my vision, and you'll help me bring it to life. Together, we'll craft masterpieces that'll make folks' jaws drop. Ready to get your hands dirty, partner?<br><br>Remember, partner, this ain't just about craftin' wood. It's about makin' a mark, leavin' behind somethin' that'll make folks remember. We'll be the talk of the town with our skills and creativity. Let's embark on this woodworkin' journey together.",
-  from: "Woody",
-  grantedItems: [],
-  requestedItems: {"Tool":15,"Wood":400,"Oil":10},
-  requirements: {skills: {}, quests:[], items:{}}
+  name: "Jeremy's Disappointing Disheartenment",
+  description: "",
+  from: "Jeremy",
+  imageUrl: "jeremy.png",
+  grantedItems: [{item: "Ale", quantity: 1}],
+  requestedItems: ["Ale"],
+  requestedQuantity: [6],
+  requirements: {skills: {}, quests:[], items:[]}
 };
 
-//createRequestInChain(questChainId, quest);
-
-
-
+//createRequestInChain(currentChains[0], quest);
 
 // outputItem: string, skillRequirementsTemp = {}, inputItems: Object
 
@@ -140,7 +142,7 @@ const quest: NpcRequest = {
 
 // imageUrl: string = '', itemName: string, itemDescription: string = ''
 
-// createItem(undefined, "Dirt", "Gettin' dirty")
+//createItem('ash.png', "Ash", "")
 
 // locationName: string, description: string = '', lootPoolItems: Object
 

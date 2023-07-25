@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import Card from "../card.tsx";
 import inventoryIcon from "../../data/homeIcons/inventory.png";
 import workshopIcon from "../../data/homeIcons/workshop.png";
 import exploreIcon from "../../data/homeIcons/forest.png";
 import requestIcon from "../../data/homeIcons/eamon.png";
+import { PlayerContext } from "../../data/playerContext.tsx";
 import buildingIcon from "../../data/homeIcons/treefarm.png";
 
 export interface HomeScreenComponent {
@@ -44,8 +45,10 @@ const components: HomeScreenComponent[] = [
 ];
 
 function HomeScreen() {
+  const playerData = useContext(PlayerContext);
   return (
     <div>
+      <h2>{playerData.displayName}</h2>
       {components.map((component, index: number) => (
         <Card
           key={index}

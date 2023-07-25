@@ -1,3 +1,4 @@
+import { ItemWithQuantity } from "../data/items";
 import { Player } from "../data/player";
 
 export function doesPlayerMeetRequirements(player: Player, requirements: Record<string, any>): boolean {
@@ -28,9 +29,10 @@ export function doesPlayerMeetRequirements(player: Player, requirements: Record<
   return true;
 }
 
-export function doesPlayerHaveResources(player: Player, requirements: Record<string, any>): boolean {
-  for (const itemName in requirements) {
-    const requiredQuantity = requirements[itemName];
+export function doesPlayerHaveResources(player: Player, requirements: ItemWithQuantity[]): boolean {
+  for (const requiredItem of requirements) {
+    const itemName = requiredItem.item;
+    const requiredQuantity = requiredItem.quantity;
     const itemData = player.inventory[itemName];
 
     if (!itemData || itemData.ownedCurrent < requiredQuantity) {

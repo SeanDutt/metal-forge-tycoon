@@ -9,6 +9,7 @@ import {
 } from "../../utils/inventoryUtils.tsx";
 import Card from "../card.tsx";
 import { ExploreLocation } from "../pages/explore.tsx";
+import { ItemWithQuantity } from "../../data/items.ts";
 
 interface LootPoolItem {
   itemName: string;
@@ -70,16 +71,19 @@ const LocationDetails = () => {
 
   const handleExplore = async () => {
     // Randomly select items from the loot pool
-    const obtainedItems = lootPool.filter(
-      (item) => Math.random() < item.probability
-    );
-
+    const obtainedItems: ItemWithQuantity[] = lootPool
+      .filter((item) => Math.random() < item.probability)
+      .map((lootItem: LootPoolItem) => ({
+        item: lootItem.itemName, // Assuming lootItem has an "itemName" property
+        quantity: 1, // You can adjust the quantity as needed
+      }));
+  
     console.log("Obtained Items:", obtainedItems);
     console.log("Player ID:", player?.id);
-
+  
     if (obtainedItems.length > 0 && player?.id) {
       await addToInventory(player.id, obtainedItems);
-      setLastObtainedItems(obtainedItems.map((item) => item.itemName));
+      setLastObtainedItems(obtainedItems.map((item) => item.item));
     } else {
       setLastObtainedItems(["Nothing!"]);
     }

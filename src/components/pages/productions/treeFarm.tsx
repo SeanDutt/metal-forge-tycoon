@@ -107,45 +107,45 @@ const TreeFarm = () => {
   // Get the upgrade cost
   const upgradeCost = calculateUpgradeCost();
 
-  const handleUpgrade = async () => {
-    const upgradeCost = calculateUpgradeCost();
-    const playerTreeFarmRef = doc(
-      db,
-      "players",
-      playerData.id,
-      "buildingData",
-      "treeFarm"
-    );
+  // const handleUpgrade = async () => {
+  //   const upgradeCost = calculateUpgradeCost();
+  //   const playerTreeFarmRef = doc(
+  //     db,
+  //     "players",
+  //     playerData.id,
+  //     "buildingData",
+  //     "treeFarm"
+  //   );
 
-    // Check if the player has enough resources to perform the upgrade
-    const canUpgrade = Object.entries(upgradeCost).every(([item, cost]) => {
-      const playerInventoryItem = playerData?.inventory[item];
-      return playerInventoryItem && playerInventoryItem.ownedCurrent >= cost;
-    });
+  //   // Check if the player has enough resources to perform the upgrade
+  //   const canUpgrade = Object.entries(upgradeCost).every(([item, cost]) => {
+  //     const playerInventoryItem = playerData?.inventory[item];
+  //     return playerInventoryItem && playerInventoryItem.ownedCurrent >= cost;
+  //   });
 
-    if (canUpgrade && playerTreeFarmData) {
-      try {
-        // Remove the required items from the player's inventory
-        const removedItems = Object.entries(upgradeCost).map(
-          ([item, cost]) => ({
-            itemName: item,
-            quantity: cost,
-          })
-        );
+  //   if (canUpgrade && playerTreeFarmData) {
+  //     try {
+  //       // Remove the required items from the player's inventory
+  //       const removedItems = Object.entries(upgradeCost).map(
+  //         ([item, cost]) => ({
+  //           itemName: item,
+  //           quantity: cost,
+  //         })
+  //       );
 
-        await removeFromInventory(playerData.id, removedItems);
+  //       await removeFromInventory(playerData.id, removedItems);
 
-        // Update the player's tree farm level
-        const updatedLevel = (playerTreeFarmData?.level || 1) + 1;
-        await updateDoc(playerTreeFarmRef, { level: updatedLevel });
+  //       // Update the player's tree farm level
+  //       const updatedLevel = (playerTreeFarmData?.level || 1) + 1;
+  //       await updateDoc(playerTreeFarmRef, { level: updatedLevel });
 
-        // Show success message or perform any other actions
-        calculateUpgradeCost();
-      } catch (error) {
-        console.error("Upgrade failed:", error);
-      }
-    }
-  };
+  //       // Show success message or perform any other actions
+  //       calculateUpgradeCost();
+  //     } catch (error) {
+  //       console.error("Upgrade failed:", error);
+  //     }
+  //   }
+  // };
 
   if (!buildingData || !buildingData) {
     return <div>Loading...</div>;
@@ -175,7 +175,11 @@ const TreeFarm = () => {
             .map(([item, cost]) => `${item}: ${cost}`)
             .join(", "),
         ]}
-        rightElement={<button onClick={handleUpgrade}>Upgrade</button>}
+        rightElement={
+          <button onClick={undefined} disabled={true}>
+            Upgrade
+          </button>
+        }
       />
       <Card primaryText={`Maximum storage: ${playerTreeFarmData?.itemLimit}`} />
       {/* Render additional components or functionality for the tree farm */}
