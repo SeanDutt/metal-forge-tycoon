@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import { db } from '../firebase.ts';
 import { Player } from './player.tsx';
@@ -19,7 +19,7 @@ const defaultPlayer: Player = {
 export const PlayerContext = createContext<Player>(defaultPlayer);
 
 export const PlayerProvider: React.FC<PlayerProviderProps> = ({ children, playerId }) => {
-  const [playerData, setPlayerData] = useState<Player | null>(null);
+  const [playerData, setPlayerData] = useState<Player>(defaultPlayer);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export const PlayerProvider: React.FC<PlayerProviderProps> = ({ children, player
       }
     };
 
-    const unsubscribe = onSnapshot(playerDocRef, (snapshot) => {
+    const unsubscribe: Unsubscribe = onSnapshot(playerDocRef, (snapshot) => {
       // Trigger the fetch of player data only if the document exists
       if (snapshot.exists()) {
         getPlayerData();
@@ -65,7 +65,7 @@ export const PlayerProvider: React.FC<PlayerProviderProps> = ({ children, player
     });
 
     return () => unsubscribe();
-  }, [playerId]);
+  }, [playerData, playerId]);
 
   if (loading) {
     // Show a loading indicator or component while player data is being fetched
@@ -75,7 +75,7 @@ export const PlayerProvider: React.FC<PlayerProviderProps> = ({ children, player
   console.log(playerData);
 
   return (
-    <PlayerContext.Provider value={playerData || defaultPlayer}>
+    <PlayerContext.Provider value={playerData}>
       {children}
     </PlayerContext.Provider>
   );
