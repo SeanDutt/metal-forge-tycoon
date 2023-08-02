@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import React, { useContext, useEffect, useState } from "react";
 import { db } from "../../firebase.ts";
 import Card from "../card.tsx";
@@ -10,25 +10,25 @@ const getCompletedRequestsInChain = async (
   playerId: string,
   requestChain: string
 ): Promise<number> => {
-  try {
-    const completedRequestsDocRef = doc(
-      db,
-      "players",
-      playerId,
-      "completedRequests",
-      requestChain
-    );
+  // try {
+  //   const completedRequestsDocRef = doc(
+  //     db,
+  //     "players",
+  //     playerId,
+  //     "completedRequests",
+  //     requestChain
+  //   );
 
-    const playerDocSnapshot = await getDoc(completedRequestsDocRef);
+  //   const playerDocSnapshot = await getDoc(completedRequestsDocRef);
 
-    if (playerDocSnapshot.exists()) {
-      const playerData = playerDocSnapshot.data();
-      const completedRequests = playerData?.requests || [];
-      return completedRequests.length;
-    }
-  } catch (error) {
-    console.error("Error fetching player's completed requests:", error);
-  }
+  //   if (playerDocSnapshot.exists()) {
+  //     const playerData = playerDocSnapshot.data();
+  //     const completedRequests = playerData?.requests || [];
+  //     return completedRequests.length;
+  //   }
+  // } catch (error) {
+  //   console.error("Error fetching player's completed requests:", error);
+  // }
   return 0;
 };
 

@@ -32,7 +32,7 @@ const ProductionBuildings = () => {
 
   return (
     <div>
-      <h2>Production Buildings</h2>
+      <h2>Production Buildings (Not yet implemented)</h2>
       {productionBuildings.map((building) => (
         <Card
           key={building.name}
