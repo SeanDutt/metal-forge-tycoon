@@ -83,11 +83,7 @@ const NpcRequests = () => {
       {requests.map((request) => (
         <Card
           key={request.name}
-          icon={
-            request.from
-              ? require(`../../data/requestIcons/${request.imageUrl}`)
-              : null
-          }
+          icon={require(`../../data/requestIcons/${request.imageUrl}`)}
           primaryText={request.name}
           secondaryText={[`Request from ${request.from}`]}
           link={`/Requests/${request.name}`}
