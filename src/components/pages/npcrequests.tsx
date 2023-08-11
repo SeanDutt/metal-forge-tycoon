@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase.ts";
-import Card from "../card.tsx";
+// import Card from "../card.tsx";
 import { PlayerContext } from "../../data/playerContext.tsx";
 import { NpcRequest } from "../../data/npcRequest.ts";
 import { doesPlayerMeetRequirements } from "../../utils/requirements.tsx";
