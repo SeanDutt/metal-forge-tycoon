@@ -48,7 +48,7 @@ const NpcRequests = () => {
             requestChains.push([requestChain[playerCompletedRequests]]);
           }
         }
-
+        console.log(requestChains.flat())
         setRequests(requestChains.flat());
       } catch (error) {
         console.error("Error fetching request chains:", error);
@@ -62,13 +62,14 @@ const NpcRequests = () => {
     <div>
       <h1>Requests</h1>
       {requests.map((request) => (
-        <Card
-          key={request.name}
-          icon={require(`../../data/requestIcons/${request.imageUrl}`)}
-          primaryText={request.name}
-          secondaryText={[`Request from ${request.from}`]}
-          link={`/Requests/${request.name}`}
-        />
+        // <Card
+        //   key={request.name}
+        //   icon={require(`../../data/requestIcons/${request.imageUrl}`)}
+        //   primaryText={request.name}
+        //   secondaryText={[`Request from ${request.from}`]}
+        //   link={`/Requests/${request.name}`}
+        // />
+        <p>Request</p>
       ))}
     </div>
   );
