@@ -27,7 +27,6 @@ const App: React.FC = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(user.uid);
         setPlayerId(user.uid);
       } else {
         setPlayerId(null);

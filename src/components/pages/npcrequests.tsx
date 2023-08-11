@@ -68,7 +68,6 @@ const NpcRequests = () => {
             requestChains.push([requestChain[playerCompletedRequests]]);
           }
         }
-        console.log(requestChains.flat())
         setRequests(requestChains.flat());
       } catch (error) {
         console.error("Error fetching request chains:", error);
