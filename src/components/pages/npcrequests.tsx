@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase.ts";
-// import Card from "../card.tsx";
+import Card from "../card.tsx";
 import { PlayerContext } from "../../data/playerContext.tsx";
 import { NpcRequest } from "../../data/npcRequest.ts";
 import { doesPlayerMeetRequirements } from "../../utils/requirements.tsx";
@@ -62,14 +62,13 @@ const NpcRequests = () => {
     <div>
       <h1>Requests</h1>
       {requests.map((request) => (
-        // <Card
-        //   key={request.name}
-        //   icon={require(`../../data/requestIcons/${request.imageUrl}`)}
-        //   primaryText={request.name}
-        //   secondaryText={[`Request from ${request.from}`]}
-        //   link={`/Requests/${request.name}`}
-        // />
-        <p>Request</p>
+        <Card
+          key={request.name}
+          // icon={require(`../../data/requestIcons/${request.imageUrl}`)}
+          primaryText={request.name}
+          secondaryText={[`Request from ${request.from}`]}
+          link={`/Requests/${request.name}`}
+        />
       ))}
     </div>
   );
