@@ -1,70 +1,164 @@
-# Getting Started with Create React App
+---
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 🛠️ Player Progression & Quest System – Firestore-Powered Game Backend
 
-## Available Scripts
+Welcome to my personal game backend project! This is a passion project I’ve been building using **React**, **Firebase**, and **Firestore**, with a focus on designing a flexible **quest system**, **inventory management**, and **player progression** architecture. It’s designed with scalability and clarity in mind, and it's been a great learning experience.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🌟 Project Overview
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+This project provides the data-driven backend and admin tooling for a resource-focused game. The core components include:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+* 🔁 **Quest Chains** with requirements and branching logic
+* 📦 **Inventory System** using Firestore subcollections
+* 🧑‍🌾 **Resource Gathering & Crafting Mechanics**
+* 🎯 **Player Progression Tracking** (skills, quests, and unlocks)
+* 🔥 Real-time syncing via `onSnapshot` and React `Context`
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🎯 Goals
 
-### `npm run build`
+* ✅ Build a reusable quest system driven by Firestore data
+* ✅ Enable conditional quest progression with resource and skill checks
+* ✅ Sync player data live in the app using Firestore subscriptions
+* ✅ Create robust crafting and gathering systems with dynamic feedback
+* 🚧 Upcoming: NPC dialog trees and world event systems
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🧱 Core Data Structures
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### `Player`
 
-### `npm run eject`
+```ts
+interface Player {
+  displayName: string;
+  id: string;
+  inventory: Record<string, { ownedCurrent: number; ownedLifetime: number }>;
+  skillLevels: Record<string, number>;
+  completedRequests: Record<string, { requests: CompletedRequest[] }>;
+}
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### `ItemWithQuantity`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```ts
+interface ItemWithQuantity {
+  item: string;
+  imageUrl?: string;
+  itemDoc?: Item;
+  quantity: number;
+}
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### `Recipe`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```ts
+interface Recipe {
+  requiredItems: ItemWithQuantity[];
+  grantedItem: ItemWithQuantity;
+}
+```
 
-## Learn More
+### `NpcRequest`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```ts
+interface NpcRequest {
+  name: string;
+  from: string;
+  description: string;
+  imageUrl: string;
+  requestedItems: string[];
+  requestedQuantity: number[];
+  grantedItems: string[];
+  grantedQuantity: number[];
+  requirements?: Record<string, number>;
+}
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 🧩 Challenges & Solutions
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### ✅ **Problem: Inventory Not Updating in Real-Time**
 
-### Analyzing the Bundle Size
+Initially, player inventory wasn't reactive. The UI only updated on page reload.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+**Solution**: Refactored the `PlayerContext` to subscribe to Firestore using `onSnapshot`, tracking both the main player document and its subcollections like `inventory` and `completedRequests`.
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### ✅ **Problem: Type Mismatches from Firestore Shape**
 
-### Advanced Configuration
+Firestore responses didn’t match the expected TypeScript structures (e.g., `completedRequests` nested under a document ID).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+**Solution**: Updated Firestore documents to follow a consistent shape and wrote transform utilities to parse data into usable formats, aligning with TypeScript interfaces.
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### ✅ **Problem: Difficulty Tracking Quest Progress**
 
-### `npm run build` fails to minify
+Tracking a player’s location in a quest chain was unclear and cumbersome.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**Solution**: Added a helper function `getRequestIndexInChain()` that reads from `player.completedRequests` to determine the current quest index, allowing clean branching logic in the UI.
+
+---
+
+## ⚙️ Technologies Used
+
+* ⚛️ **React** – For the front-end UI
+* 🔥 **Firebase Firestore** – For real-time data and subcollection structure
+* 🧪 **TypeScript** – Strong typing for clarity and safety
+* 🎮 **Custom Game Logic** – Resource processing, quest validation, inventory systems
+
+---
+
+## 🔧 Future Features
+
+* 🧙 NPC dialog interactions (with branching and history)
+* 🗺️ World state progression by player actions
+* 🔄 Server-side automation with Firebase Cloud Functions (e.g., auto-granting rewards)
+* 💾 Admin dashboard for live quest editing and player inventory management
+
+---
+
+## 💬 Why I Built This
+
+I wanted to attempt building a game using purely AI prompts, in order to practice my prompt engineering while also seeing what AI could do.
+All prompts for this game were written by me. I prompted ChatGPT to write all the code in the game, including HTML/CSS/TypeScript. I prompted a self-hosted Stable Diffusion for all art in the game.
+
+---
+
+## 📷 Screenshots
+
+![image](https://github.com/user-attachments/assets/d683019d-00b8-4e45-9150-e17f6e677743)
+![image](https://github.com/user-attachments/assets/e4a10d61-dadc-40bb-88cf-6bbc98750299)
+![image](https://github.com/user-attachments/assets/bc9419ea-3a32-46d0-b9b6-d9559536b3df)
+
+
+---
+
+## 🤝 Contributing
+
+If you're a friend, employer, or fellow dev who wants to contribute or give feedback—thank you! Feel free to open issues, fork the repo, or just reach out to me directly.
+
+---
+
+## 🧠 Learnings
+
+* Firebase’s subcollection model works great for isolated player data, but requires careful type handling.
+* Writing reusable state-based logic (like `doesPlayerHaveResources`) keeps UI clean and decisions consistent.
+* Watching Firestore with `onSnapshot` is powerful but needs debounce handling and cleanup logic to prevent over-rendering.
+
+---
+
+## 📫 Contact
+
+Have questions or want to collaborate?
+Feel free to reach out via [GitHub Issues](https://github.com/your-repo/issues) or shoot me a message directly!
+
+---
+
+Let me know if you’d like me to help generate any badges, add deploy instructions, or clean up commit history for this project.
